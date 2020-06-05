@@ -9,6 +9,8 @@ namespace EasyUpgrades
         public ResearchProjectDef researchPrerequisite;
         public ThingDef linkedThing;
         public string keyedTooltipString;
+        public List<ThingDef> additionalRequiredResources;
+        public List<ThingDef> refundedResources;
 
         public string linkedThingName
         {

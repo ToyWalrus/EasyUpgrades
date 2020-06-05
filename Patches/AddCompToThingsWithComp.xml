@@ -9,6 +9,12 @@
         <compClass>EasyUpgrades.CompUpgrade</compClass>
         <linkedThing>ElectricStove</linkedThing>
         <keyedTooltipString>EU.UpgradeStove</keyedTooltipString>
+        <researchPrerequisite>Electricity</researchPrerequisite>
+        <additionalRequiredResources>
+          <li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+          </li>
+        </additionalRequiredResources>
       </li>
     </value>
   </Operation>
@@ -20,7 +26,12 @@
       <li Class="EasyUpgrades.CompProperties_Upgradable">
         <compClass>EasyUpgrades.CompDowngrade</compClass>
         <linkedThing>FueledStove</linkedThing>
-        <keyedTooltipString>EU.DowngradeStove</keyedTooltipString>
+        <keyedTooltipString>EU.DowngradeStove</keyedTooltipString>        
+        <refundedResources>
+          <li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+          </li>
+        </refundedResources>
       </li>
     </value>
   </Operation>
@@ -33,6 +44,15 @@
         <compClass>EasyUpgrades.CompUpgrade</compClass>
         <linkedThing>ElectricTailoringBench</linkedThing>
         <keyedTooltipString>EU.UpgradeTailoringBench</keyedTooltipString>
+        <researchPrerequisite>Electricity</researchPrerequisite>
+        <additionalRequiredResources>
+          <li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+          </li>
+          <li>
+            <Steel>50</Steel>
+          </li>
+        </additionalRequiredResources>
       </li>
     </value>
   </Operation>
@@ -45,6 +65,84 @@
         <compClass>EasyUpgrades.CompDowngrade</compClass>
         <linkedThing>HandTailoringBench</linkedThing>
         <keyedTooltipString>EU.DowngradeTailoringBench</keyedTooltipString>
+        <refundedResources>
+          <li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+          </li>
+          <li>
+            <Steel>50</Steel>
+          </li>
+        </refundedResources>
+      </li>
+    </value>
+  </Operation>
+  
+  <!--Add the Upgrade comp to FueledSmithy-->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="FueledSmithy"]/comps</xpath>
+    <value>
+      <li Class="EasyUpgrades.CompProperties_Upgradable">
+        <compClass>EasyUpgrades.CompUpgrade</compClass>
+        <linkedThing>ElectricSmithy</linkedThing>
+        <keyedTooltipString>EU.UpgradeSmithy</keyedTooltipString>
+        <researchPrerequisite>Electricity</researchPrerequisite>
+        <additionalRequiredResources>
+          <li>
+            <ComponentIndustrial>3</ComponentIndustrial>
+          </li>
+        </additionalRequiredResources>
+      </li>
+    </value>
+  </Operation>
+
+  <!-- Add the Downgrade comp to ElectricSmithy -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="ElectricSmithy"]/comps</xpath>
+    <value>
+      <li Class="EasyUpgrades.CompProperties_Upgradable">
+        <compClass>EasyUpgrades.CompDowngrade</compClass>
+        <linkedThing>FueledSmithy</linkedThing>
+        <keyedTooltipString>EU.DowngradeSmithy</keyedTooltipString>
+        <refundedResources>
+          <li>
+            <ComponentIndustrial>3</ComponentIndustrial>
+          </li>
+        </refundedResources>
+      </li>
+    </value>
+  </Operation>
+
+  <!--Add the Upgrade comp to WoodGenerator-->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="WoodFiredGenerator"]/comps</xpath>
+    <value>
+      <li Class="EasyUpgrades.CompProperties_Upgradable">
+        <compClass>EasyUpgrades.CompUpgrade</compClass>
+        <linkedThing>ChemfuelPoweredGenerator</linkedThing>
+        <keyedTooltipString>EU.UpgradeGenerator</keyedTooltipString>
+        <researchPrerequisite>Electricity</researchPrerequisite>
+        <additionalRequiredResources>
+          <li>
+            <ComponentIndustrial>1</ComponentIndustrial>
+          </li>
+        </additionalRequiredResources>
+      </li>
+    </value>
+  </Operation>
+
+  <!-- Add the Downgrade comp to ChemfuelGenerator -->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef[defName="ChemfuelPoweredGenerator"]/comps</xpath>
+    <value>
+      <li Class="EasyUpgrades.CompProperties_Upgradable">
+        <compClass>EasyUpgrades.CompDowngrade</compClass>
+        <linkedThing>WoodFiredGenerator</linkedThing>
+        <keyedTooltipString>EU.DowngradeGenerator</keyedTooltipString>
+        <refundedResources>
+          <li>
+            <ComponentIndustrial>1</ComponentIndustrial>
+          </li>
+        </refundedResources>
       </li>
     </value>
   </Operation>
@@ -61,6 +159,14 @@
             <linkedThing>Autodoor</linkedThing>
             <keyedTooltipString>EU.UpgradeDoor</keyedTooltipString>
             <researchPrerequisite>Autodoors</researchPrerequisite>
+            <additionalRequiredResources>
+              <li>
+                <ComponentIndustrial>2</ComponentIndustrial>
+              </li>
+              <li>
+                <Steel>40</Steel>
+              </li>
+            </additionalRequiredResources>
           </li>
         </comps>
       </value>
@@ -73,6 +179,14 @@
           <linkedThing>Autodoor</linkedThing>
           <keyedTooltipString>EU.UpgradeDoor</keyedTooltipString>
           <researchPrerequisite>Autodoors</researchPrerequisite>
+          <additionalRequiredResources>
+            <li>
+              <ComponentIndustrial>2</ComponentIndustrial>
+            </li>
+            <li>
+              <Steel>40</Steel>
+            </li>
+          </additionalRequiredResources>
         </li>
       </value>
     </match>
@@ -86,6 +200,14 @@
         <compClass>EasyUpgrades.CompDowngrade</compClass>
         <linkedThing>Door</linkedThing>
         <keyedTooltipString>EU.DowngradeDoor</keyedTooltipString>
+        <refundedResources>
+          <li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+          </li>
+          <li>
+            <Steel>40</Steel>
+          </li>
+        </refundedResources>
       </li>
     </value>
   </Operation>
@@ -130,8 +252,5 @@
       </li>
     </value>
   </Operation>-->
-  
-  
-  <!--Wood generator and chemfuel generator?-->
-  
+    
 </Patch>

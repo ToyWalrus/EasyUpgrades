@@ -4,12 +4,20 @@
 	<EU.Downgrade>Downgrade</EU.Downgrade>
 
   <EU.UnresearchedError>You don't have the required research completed for this action ({0})</EU.UnresearchedError>
+  <EU.LackingResourcesError_1>You don't currently have the required resources needed to upgrade this (missing: {0})</EU.LackingResourcesError_1>
+  <EU.LackingResourcesError_2>You don't currently have the required resources needed to upgrade this (missing: {0}, {1})</EU.LackingResourcesError_2>
 
   <EU.UpgradeStove>Upgrade this to an Electric Stove</EU.UpgradeStove>
   <EU.DowngradeStove>Downgrade this to a Fueled Stove</EU.DowngradeStove>
 
+  <EU.UpgradeSmithy>Upgrade this to an Electric Smithy</EU.UpgradeSmithy>
+  <EU.DowngradeSmithy>Downgrade this to a Fueled Smithy</EU.DowngradeSmithy>
+
   <EU.UpgradeTailoringBench>Upgrade this to an Electric Tailoring Bench</EU.UpgradeTailoringBench>
   <EU.DowngradeTailoringBench>Downgrade this to a Hand Tailoring Bench</EU.DowngradeTailoringBench>
+
+  <EU.UpgradeGenerator>Upgrade this to a Chemfuel Powered Generator</EU.UpgradeGenerator>
+  <EU.DowngradeGenerator>Downgrade this to a Wood Fired Generator</EU.DowngradeGenerator>
 
   <EU.UpgradeDoor>Upgrade this to an Autodoor</EU.UpgradeDoor>
   <EU.DowngradeDoor>Downgrade this to a regular door</EU.DowngradeDoor>

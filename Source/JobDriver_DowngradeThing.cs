@@ -1,6 +1,7 @@
 ﻿using System;
 using Verse;
 using RimWorld;
+using System.Collections.Generic;
 
 namespace EasyUpgrades
 {
@@ -10,9 +11,15 @@ namespace EasyUpgrades
 
         protected override ThingDef getModifyToThing(Thing t)
         {
-            var upgrade = t.TryGetComp<CompDowngrade>();
-            if (upgrade != null) return upgrade.downgradeTo;
+            var downgrade = t.TryGetComp<CompDowngrade>();
+            if (downgrade != null) return downgrade.downgradeTo;
+            return null;
+        }
 
+        protected override List<ThingDef> getRefundedResources(Thing t)
+        {
+            var downgrade = t.TryGetComp<CompDowngrade>();
+            if (downgrade != null) return downgrade.refundedResources;
             return null;
         }
     }

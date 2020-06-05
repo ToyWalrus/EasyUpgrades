@@ -11,6 +11,7 @@ namespace EasyUpgrades
         {
             base.Initialize(props);
             downgradeTo = Props.linkedThing;
+            refundedResources = Props.refundedResources;
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
@@ -30,6 +31,7 @@ namespace EasyUpgrades
         }
 
         public ThingDef downgradeTo;
+        public List<ThingDef> refundedResources;
 
         public CompProperties_Upgradable Props
         {

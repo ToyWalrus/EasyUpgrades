@@ -11,6 +11,7 @@ namespace EasyUpgrades
         {
             base.Initialize(props);
             upgradeTo = Props.linkedThing;
+            additionalRequiredResources = Props.additionalRequiredResources;
         }
         
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
@@ -30,6 +31,7 @@ namespace EasyUpgrades
         }
 
         public ThingDef upgradeTo;
+        public List<ThingDef> additionalRequiredResources;
 
         public CompProperties_Upgradable Props
         {

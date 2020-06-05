@@ -23,13 +23,12 @@ namespace EasyUpgrades
             this.FailOnForbidden(TargetIndex.A);
             if (getModifyToThing(TargetA.Thing) == null)
             {
-                Log.Message("No modifiable comps on target thing");
                 yield break;
             }
 
-            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell);
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
             
-            Toil modify = new Toil().FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
+            Toil modify = new Toil();
 
             modify.initAction = () =>
             {
@@ -39,7 +38,7 @@ namespace EasyUpgrades
 
             modify.tickAction = () =>
             {
-                workLeft -= this.pawn.GetStatValue(StatDefOf.ConstructionSpeed, true) * 1.3f;
+                workLeft -= modify.actor.GetStatValue(StatDefOf.ConstructionSpeed, true) * 1.3f;
                 TickAction();
                 if (workLeft <= 0f)
                 {
@@ -128,6 +127,10 @@ namespace EasyUpgrades
         }
 
 
-        protected abstract ThingDef getModifyToThing(Thing t);        
+        protected abstract ThingDef getModifyToThing(Thing t);
+
+        protected virtual List<ThingDef> getRefundedResources(Thing t) => null;
+
+        protected virtual List<ThingDef> getAdditionalRequiredResources(Thing t) => null;
     }
 }
