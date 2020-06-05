@@ -11,9 +11,7 @@
         <keyedTooltipString>EU.UpgradeStove</keyedTooltipString>
         <researchPrerequisite>Electricity</researchPrerequisite>
         <additionalRequiredResources>
-          <li>
-            <ComponentIndustrial>2</ComponentIndustrial>
-          </li>
+          <ComponentIndustrial>2</ComponentIndustrial>
         </additionalRequiredResources>
       </li>
     </value>
@@ -27,10 +25,8 @@
         <compClass>EasyUpgrades.CompDowngrade</compClass>
         <linkedThing>FueledStove</linkedThing>
         <keyedTooltipString>EU.DowngradeStove</keyedTooltipString>        
-        <refundedResources>
-          <li>
-            <ComponentIndustrial>2</ComponentIndustrial>
-          </li>
+        <refundedResources>          
+          <ComponentIndustrial>2</ComponentIndustrial>
         </refundedResources>
       </li>
     </value>
@@ -46,12 +42,8 @@
         <keyedTooltipString>EU.UpgradeTailoringBench</keyedTooltipString>
         <researchPrerequisite>Electricity</researchPrerequisite>
         <additionalRequiredResources>
-          <li>
-            <ComponentIndustrial>2</ComponentIndustrial>
-          </li>
-          <li>
-            <Steel>50</Steel>
-          </li>
+          <ComponentIndustrial>2</ComponentIndustrial>
+          <Steel>50</Steel>
         </additionalRequiredResources>
       </li>
     </value>
@@ -66,12 +58,8 @@
         <linkedThing>HandTailoringBench</linkedThing>
         <keyedTooltipString>EU.DowngradeTailoringBench</keyedTooltipString>
         <refundedResources>
-          <li>
-            <ComponentIndustrial>2</ComponentIndustrial>
-          </li>
-          <li>
-            <Steel>50</Steel>
-          </li>
+          <ComponentIndustrial>2</ComponentIndustrial>
+          <Steel>50</Steel>
         </refundedResources>
       </li>
     </value>
@@ -87,9 +75,7 @@
         <keyedTooltipString>EU.UpgradeSmithy</keyedTooltipString>
         <researchPrerequisite>Electricity</researchPrerequisite>
         <additionalRequiredResources>
-          <li>
-            <ComponentIndustrial>3</ComponentIndustrial>
-          </li>
+          <ComponentIndustrial>3</ComponentIndustrial>
         </additionalRequiredResources>
       </li>
     </value>
@@ -104,9 +90,7 @@
         <linkedThing>FueledSmithy</linkedThing>
         <keyedTooltipString>EU.DowngradeSmithy</keyedTooltipString>
         <refundedResources>
-          <li>
-            <ComponentIndustrial>3</ComponentIndustrial>
-          </li>
+          <ComponentIndustrial>3</ComponentIndustrial>
         </refundedResources>
       </li>
     </value>
@@ -122,9 +106,7 @@
         <keyedTooltipString>EU.UpgradeGenerator</keyedTooltipString>
         <researchPrerequisite>Electricity</researchPrerequisite>
         <additionalRequiredResources>
-          <li>
-            <ComponentIndustrial>1</ComponentIndustrial>
-          </li>
+          <ComponentIndustrial>1</ComponentIndustrial>
         </additionalRequiredResources>
       </li>
     </value>
@@ -139,9 +121,7 @@
         <linkedThing>WoodFiredGenerator</linkedThing>
         <keyedTooltipString>EU.DowngradeGenerator</keyedTooltipString>
         <refundedResources>
-          <li>
-            <ComponentIndustrial>1</ComponentIndustrial>
-          </li>
+          <ComponentIndustrial>1</ComponentIndustrial>
         </refundedResources>
       </li>
     </value>
@@ -160,12 +140,8 @@
             <keyedTooltipString>EU.UpgradeDoor</keyedTooltipString>
             <researchPrerequisite>Autodoors</researchPrerequisite>
             <additionalRequiredResources>
-              <li>
-                <ComponentIndustrial>2</ComponentIndustrial>
-              </li>
-              <li>
-                <Steel>40</Steel>
-              </li>
+              <ComponentIndustrial>2</ComponentIndustrial>
+              <Steel>40</Steel>
             </additionalRequiredResources>
           </li>
         </comps>
@@ -180,12 +156,8 @@
           <keyedTooltipString>EU.UpgradeDoor</keyedTooltipString>
           <researchPrerequisite>Autodoors</researchPrerequisite>
           <additionalRequiredResources>
-            <li>
-              <ComponentIndustrial>2</ComponentIndustrial>
-            </li>
-            <li>
-              <Steel>40</Steel>
-            </li>
+            <ComponentIndustrial>2</ComponentIndustrial>
+            <Steel>40</Steel>
           </additionalRequiredResources>
         </li>
       </value>
@@ -201,12 +173,8 @@
         <linkedThing>Door</linkedThing>
         <keyedTooltipString>EU.DowngradeDoor</keyedTooltipString>
         <refundedResources>
-          <li>
-            <ComponentIndustrial>2</ComponentIndustrial>
-          </li>
-          <li>
-            <Steel>40</Steel>
-          </li>
+          <ComponentIndustrial>2</ComponentIndustrial>
+          <Steel>40</Steel>
         </refundedResources>
       </li>
     </value>

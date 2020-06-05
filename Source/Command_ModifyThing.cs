@@ -26,17 +26,13 @@ namespace EasyUpgrades
             if (modifyDesignation == null)
             {
                 if (uninstallDesignation != null)
-                {
-                    Log.Message("Removing uninstall designation");
+                {                 
                     manager.TryRemoveDesignationOn(currentThing, uninstallDef);
                 }
                 if (deconstructDesignation != null)
-                {
-                    Log.Message("Removing deconstruct designation");
+                {                 
                     manager.TryRemoveDesignationOn(currentThing, deconstructDef);
                 }
-
-                Log.Message("Modify this thing!");
                 manager.AddDesignation(new Designation(currentThing, def));
             }
         }

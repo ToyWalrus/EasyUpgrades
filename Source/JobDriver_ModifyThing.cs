@@ -12,7 +12,7 @@ namespace EasyUpgrades
         public ThingDef modifyTo;
         private float totalNeededWork;
         private float workLeft;
-
+        
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             return this.pawn.Reserve(this.Target, this.job, 1, -1, null, errorOnFailed);
@@ -21,14 +21,14 @@ namespace EasyUpgrades
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOnForbidden(TargetIndex.A);
-            if (getModifyToThing(TargetA.Thing) == null)
+            if (getModifyToThing(Target) == null)
             {
                 yield break;
             }
 
-            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell);
             
-            Toil modify = new Toil();
+            Toil modify = new Toil().FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
 
             modify.initAction = () =>
             {
@@ -39,7 +39,6 @@ namespace EasyUpgrades
             modify.tickAction = () =>
             {
                 workLeft -= modify.actor.GetStatValue(StatDefOf.ConstructionSpeed, true) * 1.3f;
-                TickAction();
                 if (workLeft <= 0f)
                 {
                     modify.actor.jobs.curDriver.ReadyForNextToil();
@@ -66,18 +65,19 @@ namespace EasyUpgrades
 
         void RemoveAndReplace(Pawn pawn)
         {
-            IntVec3 position = base.Building.Position;
-            Rot4 rotation = base.Building.Rotation;
+            IntVec3 position = Building.Position;
+            Rot4 rotation = Building.Rotation;
             BillStack currentBills = null;
-            ThingDef modifyTo = getModifyToThing(TargetA.Thing);
-            ThingDef madeOf = TargetA.Thing.Stuff;
+            List<ThingDefCountClass> refundedResources = getRefundedResources(Target);
+            ThingDef modifyTo = getModifyToThing(Target);
+            ThingDef madeOf = Target.Stuff;
 
-            if (base.Building is Building_WorkTable)
+            if (Building is Building_WorkTable)
             {
-                currentBills = (base.Building as Building_WorkTable).BillStack;
+                currentBills = (Building as Building_WorkTable).BillStack;
             }
 
-            base.Building.DeSpawn();
+            Building.DeSpawn();
 
             Thing newThing = ThingMaker.MakeThing(modifyTo, madeOf);
             newThing.SetFactionDirect(Faction.OfPlayer);
@@ -116,21 +116,33 @@ namespace EasyUpgrades
             }
 
             GenSpawn.Spawn(newThing, position, Map, rotation, WipeMode.FullRefund, false);
+            
+            // Refund resources, if applicable
+            if (refundedResources != null)
+            {
+                foreach (ThingDefCountClass resource in refundedResources)
+                {
+                    Thing thing = ThingMaker.MakeThing(resource.thingDef);
+                    thing.stackCount = resource.count;
+                    GenPlace.TryPlaceThing(thing, position, Map, ThingPlaceMode.Near);
+                }
+            }
+            
         }
         
         protected override float TotalNeededWork
         {
             get
             {
-                return Mathf.Clamp(base.Building.GetStatValue(StatDefOf.WorkToBuild, true), 20f, 3000f);
+                return Mathf.Clamp(Building.GetStatValue(StatDefOf.WorkToBuild, true), 20f, 3000f);
             }
         }
 
 
         protected abstract ThingDef getModifyToThing(Thing t);
 
-        protected virtual List<ThingDef> getRefundedResources(Thing t) => null;
+        protected virtual List<ThingDefCountClass> getRefundedResources(Thing t) => null;
 
-        protected virtual List<ThingDef> getAdditionalRequiredResources(Thing t) => null;
+        protected virtual List<ThingDefCountClass> getAdditionalRequiredResources(Thing t) => null;
     }
 }

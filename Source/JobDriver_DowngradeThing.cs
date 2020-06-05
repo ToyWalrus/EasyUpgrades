@@ -16,7 +16,7 @@ namespace EasyUpgrades
             return null;
         }
 
-        protected override List<ThingDef> getRefundedResources(Thing t)
+        protected override List<ThingDefCountClass> getRefundedResources(Thing t)
         {
             var downgrade = t.TryGetComp<CompDowngrade>();
             if (downgrade != null) return downgrade.refundedResources;

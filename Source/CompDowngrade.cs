@@ -31,7 +31,7 @@ namespace EasyUpgrades
         }
 
         public ThingDef downgradeTo;
-        public List<ThingDef> refundedResources;
+        public List<ThingDefCountClass> refundedResources;
 
         public CompProperties_Upgradable Props
         {

@@ -31,7 +31,7 @@ namespace EasyUpgrades
         }
 
         public ThingDef upgradeTo;
-        public List<ThingDef> additionalRequiredResources;
+        public List<ThingDefCountClass> additionalRequiredResources;
 
         public CompProperties_Upgradable Props
         {

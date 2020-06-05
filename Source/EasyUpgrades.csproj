@@ -128,7 +128,6 @@
     <Compile Include="CompDowngrade.cs" />
     <Compile Include="CompProperties_Upgradable.cs" />
     <Compile Include="CompUpgrade.cs" />
-    <Compile Include="Designator_Upgrade.cs" />
     <Compile Include="EasyUpgrades.cs" />
     <Compile Include="JobDriver_DowngradeThing.cs" />
     <Compile Include="JobDriver_ModifyThing.cs" />
