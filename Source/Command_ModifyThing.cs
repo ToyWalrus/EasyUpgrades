@@ -7,14 +7,12 @@ namespace EasyUpgrades
 {
     public class Command_ModifyThing : Command
     {
-        public ThingDef modifyTo;
         public ThingWithComps currentThing;
         public DesignationDef def;
 
         private DesignationDef uninstallDef => DesignationDefOf.Uninstall;
         private DesignationDef deconstructDef => DesignationDefOf.Deconstruct;
 
-        // need to provide cancel ability too?
         public override void ProcessInput(Event ev)
         {
             base.ProcessInput(ev);

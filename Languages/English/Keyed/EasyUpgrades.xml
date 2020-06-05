@@ -4,8 +4,8 @@
 	<EU.Downgrade>Downgrade</EU.Downgrade>
 
   <EU.UnresearchedError>You don't have the required research completed for this action ({0})</EU.UnresearchedError>
-  <EU.LackingResourcesError_1>You don't currently have the required resources needed to upgrade this (missing: {0})</EU.LackingResourcesError_1>
-  <EU.LackingResourcesError_2>You don't currently have the required resources needed to upgrade this (missing: {0}, {1})</EU.LackingResourcesError_2>
+  <EU.LackingResourcesError_1>missing required resources to upgrade ({0})</EU.LackingResourcesError_1>
+  <EU.LackingResourcesError_2>missing required resources to upgrade ({0}, {1})</EU.LackingResourcesError_2>
 
   <EU.UpgradeStove>Upgrade this to an Electric Stove</EU.UpgradeStove>
   <EU.DowngradeStove>Downgrade this to a Fueled Stove</EU.DowngradeStove>
@@ -23,6 +23,5 @@
   <EU.DowngradeDoor>Downgrade this to a regular door</EU.DowngradeDoor>
 
   <EU.UpgradeResearchBench>Upgrade this to a Hi-Tech Research Bench</EU.UpgradeResearchBench>
-  <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>
-  
+  <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>  
 </LanguageData>

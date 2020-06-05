@@ -18,15 +18,18 @@ namespace EasyUpgrades
         {
             if (this.parent.Faction == Faction.OfPlayer)
             {
-                yield return new Command_ModifyThing
+                DesignationManager manager = parent.Map.designationManager;
+                if (manager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Upgrade) == null)
                 {
-                    icon = ContentFinder<Texture2D>.Get("UI/Up"),
-                    defaultLabel = "EU.Upgrade".Translate(),
-                    defaultDesc = Props.keyedTooltipString.Translate(),
-                    modifyTo = this.upgradeTo,
-                    currentThing = this.parent,
-                    def = EasyUpgradesDesignationDefOf.Upgrade
-                };
+                    yield return new Command_ModifyThing
+                    {
+                        icon = ContentFinder<Texture2D>.Get("UI/Up"),
+                        defaultLabel = "EU.Upgrade".Translate(),
+                        defaultDesc = Props.keyedTooltipString.Translate(),
+                        currentThing = this.parent,
+                        def = EasyUpgradesDesignationDefOf.Upgrade
+                    };
+                }
             }
         }
 
