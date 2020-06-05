@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  
+  <WorkGiverDef>
+    <defName>UpgradeThing</defName>
+    <label>upgrade the designated item to its automated counterpart</label>
+    <giverClass>EasyUpgrades.WorkGiver_Upgradable</giverClass>
+    <workType>Construction</workType>    
+    <verb>upgrade</verb>
+    <gerund>upgrading to</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>DowngradeThing</defName>
+    <label>downgrade the designated item to its un-automated counterpart</label>
+    <giverClass>EasyUpgrades.WorkGiver_Upgradable</giverClass>
+    <workType>Construction</workType>
+    <verb>downgrade</verb>
+    <gerund>downgrading to</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+  
+</Defs>

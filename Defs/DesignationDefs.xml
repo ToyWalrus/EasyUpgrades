@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  
+  <DesignationDef>
+    <defName>Upgrade</defName>
+    <texturePath>Designations/Deconstruct</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+
+  <DesignationDef>
+    <defName>Downgrade</defName>
+    <texturePath>Designations/Deconstruct</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+  
+  <!--Also look into DesignationCategories.xml, might need to patch these into those some places-->
+</Defs>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <JobDef>
+    <defName>UpgradeThing</defName>
+    <driverClass>EasyUpgrades.JobDriver_UpgradeThing</driverClass>
+    <reportString>upgrading TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <JobDef>
+    <defName>DowngradeThing</defName>
+    <driverClass>EasyUpgrades.JobDriver_DowngradeThing</driverClass>
+    <reportString>downgrading TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+  
+</Defs>
