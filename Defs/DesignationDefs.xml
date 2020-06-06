@@ -13,5 +13,4 @@
     <targetType>Thing</targetType>
   </DesignationDef>
   
-  <!--Also look into DesignationCategories.xml, might need to patch these into those some places-->
 </Defs>

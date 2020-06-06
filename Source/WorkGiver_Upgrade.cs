@@ -40,6 +40,17 @@ namespace EasyUpgrades
             {
                 if (des.def == DesUp)
                 {
+                    WorkTypeDef workType = WorkTypeDefOf.Construction;
+                    if (pawn.workSettings.GetPriority(workType) == 0) { 
+                        if (pawn.WorkTypeIsDisabled(workType))
+                        {
+                            JobFailReason.Is("CannotPrioritizeWorkTypeDisabled".Translate(workType.gerundLabel));
+                            return null;
+                        }
+                        JobFailReason.Is("CannotPrioritizeNotAssignedToWorkType".Translate(workType.gerundLabel));
+                        return null;
+                    }
+
                     return MakeUpgradeJob(t, pawn);
                 }
             }
@@ -50,7 +61,7 @@ namespace EasyUpgrades
         {
             List<ThingDef> missingResources;
             List<ThingDefCountClass> neededResources = thingToUpgrade.TryGetComp<CompUpgrade>().additionalRequiredResources;
-            List<Thing> foundResources = FindAvailableResources(pawn, neededResources, out missingResources);
+            List<Thing> foundResources = FindAvailableResources(pawn, thingToUpgrade, neededResources, out missingResources);
 
             if (missingResources.Count == 1)
             {
@@ -63,57 +74,73 @@ namespace EasyUpgrades
                 return null;
             }
 
+            Dictionary<ThingDef, int> resourcesGathered = new Dictionary<ThingDef, int>();
             Job job = JobMaker.MakeJob(JobUpgrade, thingToUpgrade);
-            job.targetQueueA = new List<LocalTargetInfo>();
+            job.targetQueueB = new List<LocalTargetInfo>();
+            job.countQueue = new List<int>(foundResources.Count);
             for (int j = 0; j < foundResources.Count; j++)
             {
-                job.targetQueueA.Add(foundResources[j]);
-            }
-            job.count = neededResources.Sum((t) => t.count);
+                job.targetQueueB.Add(foundResources[j]);
+
+                ThingDef def = foundResources[j].def;
+                int totalNeeded = neededResources.Where((t) => t.thingDef == foundResources[j].def).FirstOrDefault().count;
+                int alreadyGathered;
+                int amountToGather;
+
+                if (resourcesGathered.TryGetValue(def, out alreadyGathered))
+                {
+                    amountToGather = Mathf.Min(foundResources[j].stackCount, totalNeeded - alreadyGathered);
+                    resourcesGathered[def] = amountToGather;
+                }
+                else
+                {
+                    amountToGather = Mathf.Min(foundResources[j].stackCount, totalNeeded);
+                    resourcesGathered.Add(def, amountToGather);
+                }
+
+                job.countQueue.Add(amountToGather);
+            }            
             job.haulMode = HaulMode.ToCellNonStorage;
             return job;
         }
 
-        private List<Thing> FindAvailableResources(Pawn pawn, List<ThingDefCountClass> neededResources, out List<ThingDef> missingResources)
+        private List<Thing> FindAvailableResources(Pawn pawn, Thing thingToUpgrade, List<ThingDefCountClass> neededResources, out List<ThingDef> missingResources)
         {
             missingResources = new List<ThingDef>();
             List<Thing> found = new List<Thing>();
-            List<SlotGroup> zones = new List<SlotGroup>(pawn.Map.haulDestinationManager.AllGroups.ToList());
-
             foreach (ThingDefCountClass neededResource in neededResources)
             {
                 int neededCount = neededResource.count;
                 ThingDef neededThing = neededResource.thingDef;
-                bool hasEnough = false;
+                int available = 0;
+                bool hasEnough = false;                
 
-                for (int i = 0; i < zones.Count; ++i)
+                if (!pawn.Map.itemAvailability.ThingsAvailableAnywhere(neededResource, pawn))
                 {
-                    IEnumerator<Thing> enumerator = zones[i].HeldThings.GetEnumerator();
-                    while (enumerator.MoveNext())
-                    {
-                        Thing current = enumerator.Current;
-                        if (current.def == neededThing && !current.IsForbidden(pawn))
-                        {
-                            neededCount -= current.stackCount;
-                            Thing t = ThingMaker.MakeThing(current.def);
-
-
-                            found.Add(current);
-
-                            if (neededCount <= 0)
-                            {
-                                hasEnough = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (hasEnough)
-                    {
-                        break;
-                    }
+                    //Log.Message("Not enough " + neededThing.label + " available on the map");
+                    missingResources.Add(neededThing);
+                    continue;
                 }
 
+                IntVec3 centerPoint = thingToUpgrade.Position;
+                IEnumerable<Thing> allThingsOfTypeOnMap = pawn.Map.listerThings.ThingsOfDef(neededThing).OrderBy((t) => (centerPoint - t.Position).LengthManhattan);
+                foreach (Thing nextThing in allThingsOfTypeOnMap)
+                {                    
+                    if (!nextThing.IsForbidden(pawn) && pawn.CanReserve(nextThing) && pawn.CanReach(nextThing, PathEndMode.ClosestTouch, Danger.Deadly))
+                    {
+                        available += nextThing.stackCount;
+                        found.Add(nextThing);
+                        //Log.Message("Found some " + neededThing.label + " (" + nextThing.stackCount + ")");
+
+                        if (available >= neededCount)
+                        {
+                            //Log.Message("Have enough " + neededThing.label + " (" + available + ")");
+                            hasEnough = true;
+                            break;
+                        }
+                    }
+                }
+                
                 if (!hasEnough)
                 {
                     missingResources.Add(neededThing);

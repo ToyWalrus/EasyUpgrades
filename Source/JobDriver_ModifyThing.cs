@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RimWorld;
 using Verse.AI;
 using UnityEngine;
@@ -9,17 +8,12 @@ namespace EasyUpgrades
 {
     public abstract class JobDriver_ModifyThing : JobDriver_RemoveBuilding
     {
-        public ThingDef modifyTo;
         private float totalNeededWork;
         private float workLeft;
         private List<Thing> resourcesUsed;
-        
+
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if (TargetB != null)
-            {
-                return pawn.Reserve(TargetB, job, 1, -1, null, errorOnFailed);
-            }
             return pawn.Reserve(TargetA, job, 1, -1, null, errorOnFailed);
         }
 
@@ -30,36 +24,38 @@ namespace EasyUpgrades
                 yield break;
             }
             this.FailOnForbidden(TargetIndex.A);
+            Toil gotoThingToUpgrade = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A);
 
-            List<ThingDefCountClass> thingDefCounts = getAdditionalRequiredResources(Target);
-            if (thingDefCounts != null)
+            if (getAdditionalRequiredResources(Target) != null)
             {
                 resourcesUsed = new List<Thing>();
-                foreach (LocalTargetInfo requiredResource in additionalRequiredResourceTargetInfos)
-                {
-                    this.job.targetC = requiredResource;
-                    int stackCount = thingDefCounts.Where((t) => t.thingDef == requiredResource.Thing.def).FirstOrDefault().count;
-                    //Log.Message("Required resource: " + requiredResource.Label);
-                    //Log.Message("Count remaining: " + job.count);
+                yield return Toils_Jump.JumpIf(gotoThingToUpgrade, () => job.GetTargetQueue(TargetIndex.B).NullOrEmpty());
 
-                    yield return Toils_Reserve.Reserve(TargetIndex.C, 1, stackCount);
-                    yield return Toils_Goto.GotoThing(TargetIndex.C, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.C);
-                    yield return Toils_Haul.StartCarryThing(TargetIndex.C, false, true);           
-                    Toil carry = Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
-                    yield return carry;
-                    yield return Toils_General.Do(() => 
-                    {
-                        //Log.Message("Using " + pawn.carryTracker.CarriedThing.Label + " in upgrade");
-                        resourcesUsed.Add(pawn.carryTracker.CarriedThing);
-                    });
-                    yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.A, carry, false, true);
-                    yield return Toils_Reserve.Reserve(TargetIndex.C, 1, stackCount);
-                }
+                Toil extract = Toils_JobTransforms.ExtractNextTargetFromQueue(TargetIndex.B);
+                yield return extract;
+
+                Toil gotoNextHaulThing = Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.ClosestTouch).FailOnDespawnedNullOrForbidden(TargetIndex.B).FailOnSomeonePhysicallyInteracting(TargetIndex.B);
+                yield return gotoNextHaulThing;
+
+                yield return Toils_Haul.StartCarryThing(TargetIndex.B, true, false, true);
+                yield return JumpToCollectNextThingForUpgrade(gotoNextHaulThing, TargetIndex.B);
+                yield return gotoThingToUpgrade;
+
+                Toil findPlaceTarget = Toils_JobTransforms.SetTargetToIngredientPlaceCell(TargetIndex.A, TargetIndex.B, TargetIndex.C);
+                yield return findPlaceTarget;
+
+                yield return RecordUsedResource();
+                yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.C, findPlaceTarget, false);
+                yield return Toils_Jump.JumpIfHaveTargetInQueue(TargetIndex.B, extract);
+                
+                extract = null;
+                gotoNextHaulThing = null;
+                findPlaceTarget = null;
             }
 
-            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell);
+            yield return gotoThingToUpgrade;
             
-            Toil modify = new Toil().FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);            
+            Toil modify = new Toil().FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
 
             modify.initAction = () =>
             {
@@ -70,6 +66,7 @@ namespace EasyUpgrades
             modify.tickAction = () =>
             {
                 workLeft -= modify.actor.GetStatValue(StatDefOf.ConstructionSpeed, true) * 1.3f;
+                modify.actor.skills.Learn(SkillDefOf.Construction, .08f * modify.actor.GetStatValue(StatDefOf.GlobalLearningFactor));
                 if (workLeft <= 0f)
                 {
                     modify.actor.jobs.curDriver.ReadyForNextToil();
@@ -81,7 +78,7 @@ namespace EasyUpgrades
             modify.activeSkill = (() => SkillDefOf.Construction);
             modify.PlaySoundAtEnd(SoundDefOf.TinyBell);
             yield return modify;
-            
+
             yield return new Toil
             {
                 initAction = () =>
@@ -91,8 +88,61 @@ namespace EasyUpgrades
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
             };
-            
+
             yield break;
+        }
+
+        private Toil JumpToCollectNextThingForUpgrade(Toil gotoGetTargetToil, TargetIndex idx)
+        {
+            Toil toil = new Toil();
+            toil.initAction = delegate ()
+            {
+                Pawn actor = toil.actor;
+                if (actor.carryTracker.CarriedThing == null)
+                {
+                    Log.Error(actor + " is not carrying anything");
+                    return;
+                }
+
+                if (actor.carryTracker.Full)
+                {
+                    return;
+                }
+
+                Job curJob = actor.jobs.curJob;
+                List<LocalTargetInfo> targetQueue = curJob.GetTargetQueue(idx);
+                if (targetQueue.NullOrEmpty())
+                {
+                    return;
+                }
+
+                for (int i = 0; i < targetQueue.Count; i++)
+                {
+                    if (GenAI.CanUseItemForWork(actor, targetQueue[i].Thing) && targetQueue[i].Thing.CanStackWith(actor.carryTracker.CarriedThing))
+                    {
+                        int amountCarried = (actor.carryTracker.CarriedThing == null) ? 0 : actor.carryTracker.CarriedThing.stackCount;
+                        int amountCanSatisfy = curJob.countQueue[i];
+                        amountCanSatisfy = Mathf.Min(amountCanSatisfy, targetQueue[i].Thing.def.stackLimit - amountCarried);
+                        amountCanSatisfy = Mathf.Min(amountCanSatisfy, actor.carryTracker.AvailableStackSpace(targetQueue[i].Thing.def));
+                        if (amountCanSatisfy > 0)
+                        {
+                            curJob.count = amountCanSatisfy;
+                            curJob.SetTarget(idx, targetQueue[i].Thing);
+                            List<int> countQueue = curJob.countQueue;
+                            int index = i;
+                            countQueue[index] -= amountCanSatisfy;
+                            if (curJob.countQueue[i] <= 0)
+                            {
+                                curJob.countQueue.RemoveAt(i);
+                                targetQueue.RemoveAt(i);
+                            }
+                            actor.jobs.curDriver.JumpToToil(gotoGetTargetToil);
+                            return;
+                        }
+                    }
+                }
+            };
+            return toil;
         }
 
         void RemoveAndReplace(Pawn pawn)
@@ -131,7 +181,7 @@ namespace EasyUpgrades
             }
 
             // Attach to power source if applicable and available
-            CompPower compPower = newThing.TryGetComp<CompPower>();            
+            CompPower compPower = newThing.TryGetComp<CompPower>();
             if (compPower != null)
             {
                 CompPower transmitter = PowerConnectionMaker.BestTransmitterForConnector(position, Map);
@@ -148,7 +198,7 @@ namespace EasyUpgrades
             }
 
             GenSpawn.Spawn(newThing, position, Map, rotation, WipeMode.Vanish);
-            
+
             // Refund resources, if applicable
             if (refundedResources != null)
             {
@@ -158,31 +208,35 @@ namespace EasyUpgrades
                     thing.stackCount = resource.count;
                     GenPlace.TryPlaceThing(thing, position, Map, ThingPlaceMode.Near);
                 }
-            }            
+            }
         }
 
         private void DestroyUsedResources()
         {
             // Despawn used resources
             if (resourcesUsed != null)
-            {
-                foreach (Thing resource in resourcesUsed)
+            {      
+                foreach (Thing used in resourcesUsed)
                 {
-                    resource.Destroy();
+                    used.Destroy();
                 }
             }
         }
 
-        private List<LocalTargetInfo> additionalRequiredResourceTargetInfos
+        private Toil RecordUsedResource()
         {
-            get => job.targetQueueA;
+            return Toils_General.Do(() =>
+            {
+                resourcesUsed.Add(TargetB.Thing);
+                Log.Message("Just used " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
+            });
         }
-        
+
         protected override float TotalNeededWork
         {
             get => Mathf.Clamp(Building.GetStatValue(StatDefOf.WorkToBuild, true), 20f, 3000f);
         }
-        
+
         protected abstract ThingDef getModifyToThing(Thing t);
         protected virtual List<ThingDefCountClass> getRefundedResources(Thing t) => null;
         protected virtual List<ThingDefCountClass> getAdditionalRequiredResources(Thing t) => null;

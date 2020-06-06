@@ -29,6 +29,18 @@ namespace EasyUpgrades
             {
                 if (des.def == DesDown)
                 {
+                    WorkTypeDef workType = WorkTypeDefOf.Construction;
+                    if (pawn.workSettings.GetPriority(workType) == 0)
+                    {
+                        if (pawn.WorkTypeIsDisabled(workType))
+                        {
+                            JobFailReason.Is("CannotPrioritizeWorkTypeDisabled".Translate(workType.gerundLabel));
+                            return null;
+                        }
+                        JobFailReason.Is("CannotPrioritizeNotAssignedToWorkType".Translate(workType.gerundLabel));
+                        return null;
+                    }
+
                     return JobMaker.MakeJob(JobDowngrade, t);
                 }
             }
