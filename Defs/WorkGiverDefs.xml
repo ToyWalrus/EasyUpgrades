@@ -4,7 +4,7 @@
   <WorkGiverDef>
     <defName>UpgradeThing</defName>
     <label>upgrade the designated item to its automated counterpart</label>
-    <giverClass>EasyUpgrades.WorkGiver_Upgradable</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_Upgrade</giverClass>
     <workType>Construction</workType>    
     <verb>upgrade</verb>
     <gerund>upgrading to</gerund>
@@ -18,7 +18,7 @@
   <WorkGiverDef>
     <defName>DowngradeThing</defName>
     <label>downgrade the designated item to its un-automated counterpart</label>
-    <giverClass>EasyUpgrades.WorkGiver_Upgradable</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_Downgrade</giverClass>
     <workType>Construction</workType>
     <verb>downgrade</verb>
     <gerund>downgrading to</gerund>

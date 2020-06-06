@@ -5,24 +5,24 @@ using Verse.AI;
 using RimWorld;
 using UnityEngine;
 
+
 namespace EasyUpgrades
 {
-    class WorkGiver_Upgradable : WorkGiver_Scanner
+    class WorkGiver_Upgrade : WorkGiver_Scanner
     {
         private DesignationDef DesUp => EasyUpgradesDesignationDefOf.Upgrade;
-        private DesignationDef DesDown => EasyUpgradesDesignationDefOf.Downgrade;
-
         private JobDef JobUpgrade => EasyUpgradesJobDefOf.UpgradeThing;
-        private JobDef JobDowngrade => EasyUpgradesJobDefOf.DowngradeThing;
 
-        //private static List<Thing> resourcesAvailable = new List<Thing>();
-
-
-        public override PathEndMode PathEndMode
+        public override ThingRequest PotentialWorkThingRequest
         {
-            get
+            get => ThingRequest.ForGroup(ThingRequestGroup.Construction);
+        }
+
+        public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
+        {
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(DesUp))
             {
-                return PathEndMode.Touch;
+                yield return designation.target.Thing;
             }
         }
 
@@ -37,36 +37,13 @@ namespace EasyUpgrades
                 return null;
             }
             foreach (Designation des in pawn.Map.designationManager.AllDesignationsOn(t))
-            {                
+            {
                 if (des.def == DesUp)
                 {
                     return MakeUpgradeJob(t, pawn);
                 }
-                else if (des.def == DesDown)
-                {
-                    return JobMaker.MakeJob(JobDowngrade, t);
-                }
             }
             return null;
-        }
-
-        public override ThingRequest PotentialWorkThingRequest
-        {
-            get => ThingRequest.ForGroup(ThingRequestGroup.Construction);
-        }
-
-        public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
-        {
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(EasyUpgradesDesignationDefOf.Upgrade))
-            {
-                yield return designation.target.Thing;
-                yield break;
-            }
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(EasyUpgradesDesignationDefOf.Downgrade))
-            {
-                yield return designation.target.Thing;
-                yield break;
-            }
         }
 
         private Job MakeUpgradeJob(Thing thingToUpgrade, Pawn pawn)
@@ -87,7 +64,7 @@ namespace EasyUpgrades
             }
 
             Job job = JobMaker.MakeJob(JobUpgrade, thingToUpgrade);
-            job.targetQueueA = new List<LocalTargetInfo>();            
+            job.targetQueueA = new List<LocalTargetInfo>();
             for (int j = 0; j < foundResources.Count; j++)
             {
                 job.targetQueueA.Add(foundResources[j]);
@@ -111,15 +88,15 @@ namespace EasyUpgrades
 
                 for (int i = 0; i < zones.Count; ++i)
                 {
-                    IEnumerator<Thing> enumerator = zones[i].HeldThings.GetEnumerator();                    
-                    while(enumerator.MoveNext())
+                    IEnumerator<Thing> enumerator = zones[i].HeldThings.GetEnumerator();
+                    while (enumerator.MoveNext())
                     {
                         Thing current = enumerator.Current;
                         if (current.def == neededThing && !current.IsForbidden(pawn))
                         {
                             neededCount -= current.stackCount;
                             Thing t = ThingMaker.MakeThing(current.def);
-                            
+
 
                             found.Add(current);
 
@@ -145,5 +122,6 @@ namespace EasyUpgrades
 
             return found;
         }
+
     }
 }
