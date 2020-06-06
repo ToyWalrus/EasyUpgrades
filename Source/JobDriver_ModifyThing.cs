@@ -34,16 +34,26 @@ namespace EasyUpgrades
             List<ThingDefCountClass> thingDefCounts = getAdditionalRequiredResources(Target);
             if (thingDefCounts != null)
             {
-                //resourcesUsed = new List<Thing>();
+                resourcesUsed = new List<Thing>();
                 foreach (LocalTargetInfo requiredResource in additionalRequiredResourceTargetInfos)
                 {
                     this.job.targetC = requiredResource;
-                    yield return Toils_Reserve.Reserve(TargetIndex.C, 1, thingDefCounts.Where((t) => t.thingDef == requiredResource.Thing.def).FirstOrDefault().count);
+                    int stackCount = thingDefCounts.Where((t) => t.thingDef == requiredResource.Thing.def).FirstOrDefault().count;
+                    //Log.Message("Required resource: " + requiredResource.Label);
+                    //Log.Message("Count remaining: " + job.count);
+
+                    yield return Toils_Reserve.Reserve(TargetIndex.C, 1, stackCount);
                     yield return Toils_Goto.GotoThing(TargetIndex.C, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.C);
-                    yield return Toils_Haul.StartCarryThing(TargetIndex.C, false, true);                                        
+                    yield return Toils_Haul.StartCarryThing(TargetIndex.C, false, true);           
                     Toil carry = Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
                     yield return carry;
+                    yield return Toils_General.Do(() => 
+                    {
+                        //Log.Message("Using " + pawn.carryTracker.CarriedThing.Label + " in upgrade");
+                        resourcesUsed.Add(pawn.carryTracker.CarriedThing);
+                    });
                     yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.A, carry, false, true);
+                    yield return Toils_Reserve.Reserve(TargetIndex.C, 1, stackCount);
                 }
             }
 
@@ -55,7 +65,6 @@ namespace EasyUpgrades
             {
                 totalNeededWork = TotalNeededWork;
                 workLeft = totalNeededWork;
-                DestroyUsedResources();
             };
 
             modify.tickAction = () =>
@@ -77,6 +86,7 @@ namespace EasyUpgrades
             {
                 initAction = () =>
                 {
+                    DestroyUsedResources();
                     RemoveAndReplace(modify.actor);
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
@@ -137,7 +147,7 @@ namespace EasyUpgrades
                 }
             }
 
-            GenSpawn.Spawn(newThing, position, Map, rotation, WipeMode.FullRefund, false);
+            GenSpawn.Spawn(newThing, position, Map, rotation, WipeMode.Vanish);
             
             // Refund resources, if applicable
             if (refundedResources != null)
