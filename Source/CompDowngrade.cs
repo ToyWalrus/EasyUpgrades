@@ -17,9 +17,8 @@ namespace EasyUpgrades
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (this.parent.Faction == Faction.OfPlayer)
-            {
-                DesignationManager manager = parent.Map.designationManager;
-                if (manager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Downgrade) == null)
+            {                
+                if (!HasDowngradeDesignation)
                 {
                     yield return new Command_ModifyThing
                     {
@@ -36,6 +35,10 @@ namespace EasyUpgrades
         public ThingDef downgradeTo;
         public List<ThingDefCountClass> refundedResources;
 
+        private bool HasDowngradeDesignation
+        {
+            get => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Downgrade) != null;
+        }
         public CompProperties_Upgradable Props
         {
             get

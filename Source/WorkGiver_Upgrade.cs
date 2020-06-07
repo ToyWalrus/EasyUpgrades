@@ -74,7 +74,7 @@ namespace EasyUpgrades
                 return null;
             }
 
-            Dictionary<ThingDef, int> resourcesGathered = new Dictionary<ThingDef, int>();
+            Dictionary<ThingDef, int> reservedResources = new Dictionary<ThingDef, int>();
             Job job = JobMaker.MakeJob(JobUpgrade, thingToUpgrade);
             job.targetQueueB = new List<LocalTargetInfo>();
             job.countQueue = new List<int>(foundResources.Count);
@@ -84,21 +84,21 @@ namespace EasyUpgrades
 
                 ThingDef def = foundResources[j].def;
                 int totalNeeded = neededResources.Where((t) => t.thingDef == foundResources[j].def).FirstOrDefault().count;
-                int alreadyGathered;
-                int amountToGather;
+                int alreadyReserved;
+                int amountToReserve;
 
-                if (resourcesGathered.TryGetValue(def, out alreadyGathered))
+                if (reservedResources.TryGetValue(def, out alreadyReserved))
                 {
-                    amountToGather = Mathf.Min(foundResources[j].stackCount, totalNeeded - alreadyGathered);
-                    resourcesGathered[def] = amountToGather;
+                    amountToReserve = Mathf.Min(foundResources[j].stackCount, totalNeeded - alreadyReserved);
+                    reservedResources[def] = amountToReserve;
                 }
                 else
                 {
-                    amountToGather = Mathf.Min(foundResources[j].stackCount, totalNeeded);
-                    resourcesGathered.Add(def, amountToGather);
+                    amountToReserve = Mathf.Min(foundResources[j].stackCount, totalNeeded);
+                    reservedResources.Add(def, amountToReserve);
                 }
 
-                job.countQueue.Add(amountToGather);
+                job.countQueue.Add(amountToReserve);
             }            
             job.haulMode = HaulMode.ToCellNonStorage;
             return job;

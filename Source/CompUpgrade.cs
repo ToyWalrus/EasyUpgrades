@@ -18,8 +18,7 @@ namespace EasyUpgrades
         {
             if (this.parent.Faction == Faction.OfPlayer)
             {
-                DesignationManager manager = parent.Map.designationManager;
-                if (manager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Upgrade) == null)
+                if (!HasUpgradeDesignation)
                 {
                     yield return new Command_ModifyThing
                     {
@@ -32,9 +31,14 @@ namespace EasyUpgrades
                 }
             }
         }
-
+    
         public ThingDef upgradeTo;
         public List<ThingDefCountClass> additionalRequiredResources;
+
+        private bool HasUpgradeDesignation
+        {
+            get => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Upgrade) != null;
+        }
 
         public CompProperties_Upgradable Props
         {

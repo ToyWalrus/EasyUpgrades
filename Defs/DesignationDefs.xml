@@ -3,13 +3,13 @@
   
   <DesignationDef>
     <defName>Upgrade</defName>
-    <texturePath>Designations/Deconstruct</texturePath>
+    <texturePath>UI/DesUp</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>
 
   <DesignationDef>
     <defName>Downgrade</defName>
-    <texturePath>Designations/Deconstruct</texturePath>
+    <texturePath>UI/DesDown</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>
   

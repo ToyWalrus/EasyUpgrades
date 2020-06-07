@@ -10,7 +10,7 @@ namespace EasyUpgrades
     {
         private float totalNeededWork;
         private float workLeft;
-        private List<Thing> resourcesUsed;
+        private List<Thing> resourcesPlaced;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -28,7 +28,7 @@ namespace EasyUpgrades
 
             if (getAdditionalRequiredResources(Target) != null)
             {
-                resourcesUsed = new List<Thing>();
+                resourcesPlaced = new List<Thing>();
                 yield return Toils_Jump.JumpIf(gotoThingToUpgrade, () => job.GetTargetQueue(TargetIndex.B).NullOrEmpty());
 
                 Toil extract = Toils_JobTransforms.ExtractNextTargetFromQueue(TargetIndex.B);
@@ -41,11 +41,12 @@ namespace EasyUpgrades
                 yield return JumpToCollectNextThingForUpgrade(gotoNextHaulThing, TargetIndex.B);
                 yield return gotoThingToUpgrade;
 
+                yield return Toils_Jump.JumpIf(gotoNextHaulThing, () => pawn.carryTracker.CarriedThing == null);
                 Toil findPlaceTarget = Toils_JobTransforms.SetTargetToIngredientPlaceCell(TargetIndex.A, TargetIndex.B, TargetIndex.C);
                 yield return findPlaceTarget;
 
-                yield return RecordUsedResource();
                 yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.C, findPlaceTarget, false);
+                yield return RecordPlacedResource();
                 yield return Toils_Jump.JumpIfHaveTargetInQueue(TargetIndex.B, extract);
                 
                 extract = null;
@@ -83,7 +84,7 @@ namespace EasyUpgrades
             {
                 initAction = () =>
                 {
-                    DestroyUsedResources();
+                    DestroyPlacedResources();
                     RemoveAndReplace(modify.actor);
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
@@ -118,23 +119,26 @@ namespace EasyUpgrades
 
                 for (int i = 0; i < targetQueue.Count; i++)
                 {
+                    Log.Message("Testing " + targetQueue[i].Thing.Label + " for work or something");
                     if (GenAI.CanUseItemForWork(actor, targetQueue[i].Thing) && targetQueue[i].Thing.CanStackWith(actor.carryTracker.CarriedThing))
                     {
+                        Log.Message("Using item for work: " + targetQueue[i].Thing.Label);
                         int amountCarried = (actor.carryTracker.CarriedThing == null) ? 0 : actor.carryTracker.CarriedThing.stackCount;
-                        int amountCanSatisfy = curJob.countQueue[i];
-                        amountCanSatisfy = Mathf.Min(amountCanSatisfy, targetQueue[i].Thing.def.stackLimit - amountCarried);
-                        amountCanSatisfy = Mathf.Min(amountCanSatisfy, actor.carryTracker.AvailableStackSpace(targetQueue[i].Thing.def));
-                        if (amountCanSatisfy > 0)
+                        int amountToSatisfy = curJob.countQueue[i];
+                        amountToSatisfy = Mathf.Min(amountToSatisfy, targetQueue[i].Thing.def.stackLimit - amountCarried);
+                        amountToSatisfy = Mathf.Min(amountToSatisfy, actor.carryTracker.AvailableStackSpace(targetQueue[i].Thing.def));
+                        if (amountToSatisfy > 0)
                         {
-                            curJob.count = amountCanSatisfy;
+                            curJob.count = amountToSatisfy;
                             curJob.SetTarget(idx, targetQueue[i].Thing);
                             List<int> countQueue = curJob.countQueue;
                             int index = i;
-                            countQueue[index] -= amountCanSatisfy;
-                            if (curJob.countQueue[i] <= 0)
+                            countQueue[index] -= amountToSatisfy;
+                            if (curJob.countQueue[index] <= 0)
                             {
-                                curJob.countQueue.RemoveAt(i);
-                                targetQueue.RemoveAt(i);
+                                Log.Message("Finished count for " + targetQueue[index].Label);
+                                curJob.countQueue.RemoveAt(index);
+                                targetQueue.RemoveAt(index);
                             }
                             actor.jobs.curDriver.JumpToToil(gotoGetTargetToil);
                             return;
@@ -158,6 +162,13 @@ namespace EasyUpgrades
             {
                 currentBills = (Building as Building_WorkTable).BillStack;
             }
+
+            // Try to refund the unused fuel
+            //CompRefuelable refuelable = Building.TryGetComp<CompRefuelable>();
+            //if (refuelable != null)
+            //{
+            //    refuelable.ParentHolder.GetDirectlyHeldThings().TryDropAll(Building.Position, Building.Map, ThingPlaceMode.Near);                
+            //}
 
             Building.DeSpawn();
 
@@ -211,24 +222,36 @@ namespace EasyUpgrades
             }
         }
 
-        private void DestroyUsedResources()
+        private void DestroyPlacedResources()
         {
             // Despawn used resources
-            if (resourcesUsed != null)
+            if (job.placedThings != null)
             {      
-                foreach (Thing used in resourcesUsed)
+                foreach (ThingCountClass used in job.placedThings)
                 {
-                    used.Destroy();
+                    if (used.thing.Destroyed)
+                    {
+                        Log.Error("Tried to use up " + used.thing.Label + " but it was already destroyed!");                        
+                    }
+                    else
+                    {
+                        used.thing.Destroy();
+                    }
                 }
             }
         }
-
-        private Toil RecordUsedResource()
+        
+        private Toil RecordPlacedResource()
         {
             return Toils_General.Do(() =>
             {
-                resourcesUsed.Add(TargetB.Thing);
-                Log.Message("Just used " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
+                //resourcesPlaced.Add(TargetB.Thing);
+                //Log.Message("Just placed " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
+                //Log.Message("Resources placed so far:");
+                foreach (ThingCountClass t in job.placedThings)
+                {
+                    Log.Message(t.thing.Label + ": " + t.Count);
+                }
             });
         }
 
