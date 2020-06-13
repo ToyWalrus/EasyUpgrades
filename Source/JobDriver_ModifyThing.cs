@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using Verse.AI;
 using UnityEngine;
@@ -24,11 +25,11 @@ namespace EasyUpgrades
                 yield break;
             }
             this.FailOnForbidden(TargetIndex.A);
-            Toil gotoThingToUpgrade = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A);            
+            Toil gotoThingToUpgrade = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A);
+            resourcesPlaced = new List<Thing>();
 
             if (getAdditionalRequiredResources(Target) != null)
             {
-                resourcesPlaced = new List<Thing>();
                 yield return Toils_Jump.JumpIf(gotoThingToUpgrade, () => job.GetTargetQueue(TargetIndex.B).NullOrEmpty());
 
                 Toil extract = Toils_JobTransforms.ExtractNextTargetFromQueue(TargetIndex.B);
@@ -48,14 +49,14 @@ namespace EasyUpgrades
                 yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.C, findPlaceTarget, false);
                 yield return RecordPlacedResource();
                 yield return Toils_Jump.JumpIfHaveTargetInQueue(TargetIndex.B, extract);
-                
+
                 extract = null;
                 gotoNextHaulThing = null;
                 findPlaceTarget = null;
             }
 
             yield return gotoThingToUpgrade;
-            
+
             Toil modify = new Toil().FailOnDestroyedNullOrForbidden(TargetIndex.A).FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
 
             modify.initAction = () =>
@@ -159,11 +160,18 @@ namespace EasyUpgrades
             }
 
             // Try to refund the unused fuel
-            //CompRefuelable refuelable = Building.TryGetComp<CompRefuelable>();
-            //if (refuelable != null)
-            //{
-            //    refuelable.ParentHolder.GetDirectlyHeldThings().TryDropAll(Building.Position, Building.Map, ThingPlaceMode.Near);                
-            //}
+            CompRefuelable refuelable = Building.TryGetComp<CompRefuelable>();
+            if (refuelable != null)
+            {
+                int fuelToRefund = Mathf.CeilToInt(refuelable.Fuel);
+                ThingDef fuelDef = refuelable.Props.fuelFilter.AllowedThingDefs.First();
+                if (fuelDef != null && fuelToRefund > 0)
+                {
+                    Thing fuel = ThingMaker.MakeThing(fuelDef);
+                    fuel.stackCount = fuelToRefund;
+                    GenPlace.TryPlaceThing(fuel, position, Map, ThingPlaceMode.Near);
+                }
+            }
 
             Building.DeSpawn();
 
@@ -224,7 +232,7 @@ namespace EasyUpgrades
             {
                 if (used.Destroyed)
                 {
-                    Log.Error("Tried to use up " + used.Label + " but it was already destroyed!");                        
+                    Log.Error("Tried to use up " + used.Label + " but it was already destroyed!");
                 }
                 else
                 {
@@ -232,7 +240,7 @@ namespace EasyUpgrades
                 }
             }
         }
-        
+
         private Toil RecordPlacedResource()
         {
             return Toils_General.Do(() =>
