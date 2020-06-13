@@ -24,7 +24,7 @@ namespace EasyUpgrades
                 yield break;
             }
             this.FailOnForbidden(TargetIndex.A);
-            Toil gotoThingToUpgrade = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A);
+            Toil gotoThingToUpgrade = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.A);            
 
             if (getAdditionalRequiredResources(Target) != null)
             {
@@ -93,12 +93,11 @@ namespace EasyUpgrades
             yield break;
         }
 
-        private Toil JumpToCollectNextThingForUpgrade(Toil gotoGetTargetToil, TargetIndex idx)
+        private Toil JumpToCollectNextThingForUpgrade(Toil gotoGetTargetToil, TargetIndex targetIdx)
         {
-            Toil toil = new Toil();
-            toil.initAction = delegate ()
+            return Toils_General.Do(() =>
             {
-                Pawn actor = toil.actor;
+                Pawn actor = gotoGetTargetToil.actor;
                 if (actor.carryTracker.CarriedThing == null)
                 {
                     Log.Error(actor + " is not carrying anything");
@@ -111,7 +110,7 @@ namespace EasyUpgrades
                 }
 
                 Job curJob = actor.jobs.curJob;
-                List<LocalTargetInfo> targetQueue = curJob.GetTargetQueue(idx);
+                List<LocalTargetInfo> targetQueue = curJob.GetTargetQueue(targetIdx);
                 if (targetQueue.NullOrEmpty())
                 {
                     return;
@@ -119,34 +118,30 @@ namespace EasyUpgrades
 
                 for (int i = 0; i < targetQueue.Count; i++)
                 {
-                    Log.Message("Testing " + targetQueue[i].Thing.Label + " for work or something");
-                    if (GenAI.CanUseItemForWork(actor, targetQueue[i].Thing) && targetQueue[i].Thing.CanStackWith(actor.carryTracker.CarriedThing))
+                    int idx = i;
+                    if (GenAI.CanUseItemForWork(actor, targetQueue[idx].Thing) && targetQueue[i].Thing.CanStackWith(actor.carryTracker.CarriedThing))
                     {
-                        Log.Message("Using item for work: " + targetQueue[i].Thing.Label);
                         int amountCarried = (actor.carryTracker.CarriedThing == null) ? 0 : actor.carryTracker.CarriedThing.stackCount;
-                        int amountToSatisfy = curJob.countQueue[i];
-                        amountToSatisfy = Mathf.Min(amountToSatisfy, targetQueue[i].Thing.def.stackLimit - amountCarried);
-                        amountToSatisfy = Mathf.Min(amountToSatisfy, actor.carryTracker.AvailableStackSpace(targetQueue[i].Thing.def));
+                        int amountToSatisfy = curJob.countQueue[idx];
+                        amountToSatisfy = Mathf.Min(amountToSatisfy, targetQueue[idx].Thing.def.stackLimit - amountCarried);
+                        amountToSatisfy = Mathf.Min(amountToSatisfy, actor.carryTracker.AvailableStackSpace(targetQueue[idx].Thing.def));
                         if (amountToSatisfy > 0)
                         {
                             curJob.count = amountToSatisfy;
-                            curJob.SetTarget(idx, targetQueue[i].Thing);
+                            curJob.SetTarget(targetIdx, targetQueue[idx].Thing);
                             List<int> countQueue = curJob.countQueue;
-                            int index = i;
-                            countQueue[index] -= amountToSatisfy;
-                            if (curJob.countQueue[index] <= 0)
+                            countQueue[idx] -= amountToSatisfy;
+                            if (curJob.countQueue[idx] <= 0)
                             {
-                                Log.Message("Finished count for " + targetQueue[index].Label);
-                                curJob.countQueue.RemoveAt(index);
-                                targetQueue.RemoveAt(index);
+                                curJob.countQueue.RemoveAt(idx);
+                                targetQueue.RemoveAt(idx);
                             }
                             actor.jobs.curDriver.JumpToToil(gotoGetTargetToil);
                             return;
                         }
                     }
                 }
-            };
-            return toil;
+            });
         }
 
         void RemoveAndReplace(Pawn pawn)
@@ -225,18 +220,15 @@ namespace EasyUpgrades
         private void DestroyPlacedResources()
         {
             // Despawn used resources
-            if (job.placedThings != null)
-            {      
-                foreach (ThingCountClass used in job.placedThings)
+            foreach (Thing used in resourcesPlaced)
+            {
+                if (used.Destroyed)
                 {
-                    if (used.thing.Destroyed)
-                    {
-                        Log.Error("Tried to use up " + used.thing.Label + " but it was already destroyed!");                        
-                    }
-                    else
-                    {
-                        used.thing.Destroy();
-                    }
+                    Log.Error("Tried to use up " + used.Label + " but it was already destroyed!");                        
+                }
+                else
+                {
+                    used.Destroy();
                 }
             }
         }
@@ -245,13 +237,8 @@ namespace EasyUpgrades
         {
             return Toils_General.Do(() =>
             {
-                //resourcesPlaced.Add(TargetB.Thing);
-                //Log.Message("Just placed " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
-                //Log.Message("Resources placed so far:");
-                foreach (ThingCountClass t in job.placedThings)
-                {
-                    Log.Message(t.thing.Label + ": " + t.Count);
-                }
+                resourcesPlaced.Add(TargetB.Thing);
+                Log.Message("Just placed " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
             });
         }
 

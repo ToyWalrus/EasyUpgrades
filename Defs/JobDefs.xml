@@ -6,6 +6,7 @@
     <driverClass>EasyUpgrades.JobDriver_UpgradeThing</driverClass>
     <reportString>upgrading TargetA.</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <suspendable>false</suspendable>
   </JobDef>
 
   <JobDef>
@@ -13,6 +14,7 @@
     <driverClass>EasyUpgrades.JobDriver_DowngradeThing</driverClass>
     <reportString>downgrading TargetA.</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <suspendable>false</suspendable>
   </JobDef>
   
 </Defs>
