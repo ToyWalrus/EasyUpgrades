@@ -32,6 +32,7 @@ namespace EasyUpgrades
                 if (des.def == EasyUpgradesDesignationDefOf.IncreaseQuality)
                 {
                     List<ThingCountClass> resources;
+                    Log.Message("Increase quality for " + t.Label);
                     ThingDefCountClass neededResource = GetStuffNeededForQualityIncrease(t);
                     if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources)) return null;
 
@@ -68,11 +69,11 @@ namespace EasyUpgrades
             Log.Message("Try to increase building quality built from " + t.Stuff.label);
 
             Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Building, t);
-            job.targetQueueA = new List<LocalTargetInfo>();
+            job.targetQueueB = new List<LocalTargetInfo>();
             job.countQueue = new List<int>();
             foreach (ThingCountClass resource in resources)
             {
-                job.targetQueueA.Add(resource.thing);
+                job.targetQueueB.Add(resource.thing);
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
@@ -220,7 +221,7 @@ namespace EasyUpgrades
             }
 
             RecipeMakerProperties recipeMaker = t.def.recipeMaker;
-            if (recipeMaker.bulkRecipeCount > 0)
+            if (recipeMaker != null && recipeMaker.bulkRecipeCount > 0)
             {
                 amountModifier = recipeMaker.bulkRecipeCount;
             }
@@ -267,7 +268,7 @@ namespace EasyUpgrades
                     neededForNextQualityLevel *= 3f;
                     break;
                 case QualityCategory.Legendary:
-                    Log.Message("Can't upgrade a legendary thing!");
+                    Log.Message("Can't increase quality of a legendary thing!");
                     return null;
             }
 
@@ -276,8 +277,9 @@ namespace EasyUpgrades
 
         private Building GetClosestNeededCraftingBuilding(Pawn pawn, Thing t)
         {
+            List<string> defNames = t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
             return pawn.Map.listerBuildings.allBuildingsColonist
-                .Where((b) => t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName).Contains(b.def.defName))
+                .Where((b) => defNames.Contains(b.def.defName) && !b.IsForbidden(pawn) && !b.IsBurning())
                 .OrderBy((b) => (b.Position - pawn.Position).LengthManhattan)
                 .FirstOrDefault();
         }
