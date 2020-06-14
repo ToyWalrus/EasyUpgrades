@@ -2,6 +2,10 @@
 <LanguageData>
 	<EU.Upgrade>Upgrade</EU.Upgrade>
 	<EU.Downgrade>Downgrade</EU.Downgrade>
+  <EU.IncreaseQuality>Increase quality</EU.IncreaseQuality>
+
+  <EU.TryIncreaseQualityTooltip>Attempt to increase the quality of this item</EU.TryIncreaseQualityTooltip>
+  <EU.TryIncreaseQualityTooltipWithChance>Attempt to increase the quality of this item ({0}% chance)</EU.TryIncreaseQualityTooltipWithChance>
 
   <EU.UnresearchedError>You don't have the required research completed for this action ({0})</EU.UnresearchedError>
   <EU.LackingResourcesError_1>missing required resources to upgrade ({0})</EU.LackingResourcesError_1>
@@ -22,6 +26,6 @@
   <EU.UpgradeDoor>Upgrade this to an Autodoor</EU.UpgradeDoor>
   <EU.DowngradeDoor>Downgrade this to a regular door</EU.DowngradeDoor>
 
-  <EU.UpgradeResearchBench>Upgrade this to a Hi-Tech Research Bench</EU.UpgradeResearchBench>
-  <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>  
+  <!--<EU.UpgradeResearchBench>Upgrade this to a Hi-Tech Research Bench</EU.UpgradeResearchBench>
+  <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>-->  
 </LanguageData>

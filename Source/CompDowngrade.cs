@@ -7,6 +7,7 @@ namespace EasyUpgrades
 {
     class CompDowngrade : ThingComp
     {
+        public CompProperties_Upgradable Props => (CompProperties_Upgradable)this.props;
         public override void Initialize(CompProperties props)
         {
             base.Initialize(props);
@@ -35,16 +36,6 @@ namespace EasyUpgrades
         public ThingDef downgradeTo;
         public List<ThingDefCountClass> refundedResources;
 
-        private bool HasDowngradeDesignation
-        {
-            get => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Downgrade) != null;
-        }
-        public CompProperties_Upgradable Props
-        {
-            get
-            {
-                return (CompProperties_Upgradable)this.props;
-            }
-        }
+        private bool HasDowngradeDesignation => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Downgrade) != null;
     }
 }

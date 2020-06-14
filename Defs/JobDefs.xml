@@ -16,5 +16,12 @@
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
     <suspendable>false</suspendable>
   </JobDef>
+
+  <JobDef>
+    <defName>IncreaseQuality</defName>
+    <driverClass>EasyUpgrades.JobDriver_IncreaseQuality</driverClass>
+    <reportString>attempting to increase TargetA quality</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
   
 </Defs>

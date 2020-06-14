@@ -7,6 +7,7 @@ namespace EasyUpgrades
 {
     class CompUpgrade : ThingComp
     {
+        public CompProperties_Upgradable Props => (CompProperties_Upgradable)this.props;
         public override void Initialize(CompProperties props)
         {
             base.Initialize(props);
@@ -34,18 +35,6 @@ namespace EasyUpgrades
     
         public ThingDef upgradeTo;
         public List<ThingDefCountClass> additionalRequiredResources;
-
-        private bool HasUpgradeDesignation
-        {
-            get => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Upgrade) != null;
-        }
-
-        public CompProperties_Upgradable Props
-        {
-            get
-            {
-                return (CompProperties_Upgradable)this.props;
-            }
-        }
+        private bool HasUpgradeDesignation => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.Upgrade) != null;
     }
 }

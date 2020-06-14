@@ -110,7 +110,6 @@
     <None Include="..\Defs\DesignationDefs.xml" />
     <None Include="..\Defs\JobDefs.xml" />
     <None Include="..\Defs\WorkGiverDefs.xml" />
-    <None Include="..\Defs\WorkTypeDefs.xml" />
     <None Include="..\Languages\**" />
     <None Include="..\Patches\**" />
     <Reference Include="UnityEngine">
@@ -130,14 +129,17 @@
     <Compile Include="Command_ModifyThing.cs" />
     <Compile Include="CompDowngrade.cs" />
     <Compile Include="CompProperties_Upgradable.cs" />
+    <Compile Include="CompQualityUpgrade.cs" />
     <Compile Include="CompUpgrade.cs" />
     <Compile Include="EasyUpgrades.cs" />
     <Compile Include="JobDriver_DowngradeThing.cs" />
     <Compile Include="JobDriver_ModifyThing.cs" />
+    <Compile Include="JobDriver_IncreaseQuality.cs" />
     <Compile Include="JobDriver_UpgradeThing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkGiver_Downgrade.cs" />
     <Compile Include="WorkGiver_Upgrade.cs" />
+    <Compile Include="WorkGiver_IncreaseQuality.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

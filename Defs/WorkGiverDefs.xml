@@ -28,5 +28,18 @@
     <priorityInType>100</priorityInType>
     <prioritizeSustains>true</prioritizeSustains>
   </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>IncreaseQuality</defName>
+    <label>attempt to increase the quality of this item</label>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <workType>Construction</workType>
+    <verb>increase quality</verb>
+    <gerund>increasing quality for</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>    
+  </WorkGiverDef>  
   
 </Defs>

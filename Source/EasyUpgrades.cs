@@ -10,28 +10,11 @@ namespace EasyUpgrades
     {
         static EasyUpgrades()
         {
-            // may not need harmony?
-            //var harmony = new Harmony("com.github.toywalrus.easy_upgrades");
+            //var harmony = new Harmony("com.github.toywalrus.easyupgrades");
             //harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
-
-    [StaticConstructorOnStartup]
-    public static class ModifiableThings
-    {
-        public static List<string> defNames;
-
-        static ModifiableThings()
-        {
-            defNames = new List<string>();
-            defNames.Add("FueledStove");
-            defNames.Add("ElectricStove");
-            defNames.Add("HandTailoringBench");
-            defNames.Add("ElectricTailoringBench");
-            defNames.Add("Door");
-            defNames.Add("Autodoor");
-        }  
-    }
+    
 
     [DefOf]
     public static class EasyUpgradesJobDefOf
@@ -43,6 +26,7 @@ namespace EasyUpgrades
 
         public static JobDef UpgradeThing;
         public static JobDef DowngradeThing;
+        public static JobDef IncreaseQuality;
     }
 
 
@@ -56,7 +40,9 @@ namespace EasyUpgrades
 
         public static DesignationDef Upgrade;
         public static DesignationDef Downgrade;
+        public static DesignationDef QualityUpgrade;
     }
+
 
     [DefOf]
     public static class EasyUpgradesWorkGiverDefOf
@@ -69,16 +55,4 @@ namespace EasyUpgrades
         public static WorkGiverDef UpgradeThing;
         public static WorkGiverDef DowngradeThing;
     }
-
-    //[DefOf]
-    //public static class EasyUpgradesWorkTypeDefOf
-    //{
-    //    static EasyUpgradesWorkTypeDefOf()
-    //    {
-    //        DefOfHelper.EnsureInitializedInCtor(typeof(EasyUpgradesWorkTypeDefOf));
-    //    }
-
-    //    public static WorkTypeDef UpgradeThing;
-    //    public static WorkTypeDef DowngradeThing;
-    //}
 }

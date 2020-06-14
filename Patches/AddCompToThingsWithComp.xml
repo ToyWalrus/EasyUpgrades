@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
 
+  <!--Add the quality upgrade comp to things with quality-->
+  <Operation Class="PatchOperationAdd">
+    <xpath>/Defs/ThingDef/comps[//compClass=CompQuality]</xpath>
+    <value>
+      <li>
+        <compClass>EasyUpgrades.CompQualityUpgrade</compClass>
+      </li>
+    </value>
+  </Operation>
+
   <!-- Add the Upgrade comp to FueledStove -->
   <Operation Class="PatchOperationAdd">
     <xpath>/Defs/ThingDef[defName="FueledStove"]/comps</xpath>
