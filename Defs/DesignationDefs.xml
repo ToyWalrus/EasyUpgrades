@@ -12,5 +12,11 @@
     <texturePath>UI/DesDown</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>
+
+  <DesignationDef>
+    <defName>IncreaseQuality</defName>
+    <texturePath>UI/DesQualityUp</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
   
 </Defs>

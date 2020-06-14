@@ -1,21 +1,8 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
-using Verse;
+﻿using Verse;
 using RimWorld;
 
 namespace EasyUpgrades
-{
-    [StaticConstructorOnStartup]
-    public class EasyUpgrades
-    {
-        static EasyUpgrades()
-        {
-            //var harmony = new Harmony("com.github.toywalrus.easyupgrades");
-            //harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
-    }
-    
-
+{   
     [DefOf]
     public static class EasyUpgradesJobDefOf
     {
@@ -26,7 +13,8 @@ namespace EasyUpgrades
 
         public static JobDef UpgradeThing;
         public static JobDef DowngradeThing;
-        public static JobDef IncreaseQuality;
+        public static JobDef IncreaseQuality_Building;
+        public static JobDef IncreaseQuality_Crafting;
     }
 
 
@@ -40,7 +28,7 @@ namespace EasyUpgrades
 
         public static DesignationDef Upgrade;
         public static DesignationDef Downgrade;
-        public static DesignationDef QualityUpgrade;
+        public static DesignationDef IncreaseQuality;
     }
 
 
@@ -54,5 +42,9 @@ namespace EasyUpgrades
 
         public static WorkGiverDef UpgradeThing;
         public static WorkGiverDef DowngradeThing;
+        public static WorkGiverDef IncreaseQuality_Building;
+        public static WorkGiverDef IncreaseQuality_Apparel;
+        public static WorkGiverDef IncreaseQuality_Item;
+        public static WorkGiverDef IncreaseQuality_Art;
     }
 }

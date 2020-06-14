@@ -17,7 +17,7 @@ namespace EasyUpgrades
         
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            if (this.parent.Faction == Faction.OfPlayer)
+            if (parent.Faction == Faction.OfPlayer)
             {
                 if (!HasUpgradeDesignation)
                 {

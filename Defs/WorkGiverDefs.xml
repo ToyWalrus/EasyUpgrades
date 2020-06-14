@@ -30,7 +30,7 @@
   </WorkGiverDef>
 
   <WorkGiverDef>
-    <defName>IncreaseQuality</defName>
+    <defName>IncreaseQuality_Building</defName>
     <label>attempt to increase the quality of this item</label>
     <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
     <workType>Construction</workType>
@@ -40,6 +40,45 @@
       <li>Manipulation</li>
     </requiredCapacities>
     <priorityInType>100</priorityInType>    
-  </WorkGiverDef>  
-  
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>IncreaseQuality_Apparel</defName>
+    <label>attempt to increase the quality of this item</label>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <workType>Tailoring</workType>
+    <verb>increase quality</verb>
+    <gerund>increasing quality for</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>IncreaseQuality_Item</defName>
+    <label>attempt to increase the quality of this item</label>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <workType>Crafting</workType>
+    <verb>increase quality</verb>
+    <gerund>increasing quality for</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>IncreaseQuality_Art</defName>
+    <label>attempt to increase the quality of this item</label>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <workType>Art</workType>
+    <verb>increase quality</verb>
+    <gerund>increasing quality for</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <priorityInType>100</priorityInType>
+  </WorkGiverDef>
+
 </Defs>

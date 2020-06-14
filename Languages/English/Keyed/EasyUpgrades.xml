@@ -6,6 +6,7 @@
 
   <EU.TryIncreaseQualityTooltip>Attempt to increase the quality of this item</EU.TryIncreaseQualityTooltip>
   <EU.TryIncreaseQualityTooltipWithChance>Attempt to increase the quality of this item ({0}% chance)</EU.TryIncreaseQualityTooltipWithChance>
+  <EU.LackingQualityResource>missing resource to use for quality increase ({0})</EU.LackingQualityResource>
 
   <EU.UnresearchedError>You don't have the required research completed for this action ({0})</EU.UnresearchedError>
   <EU.LackingResourcesError_1>missing required resources to upgrade ({0})</EU.LackingResourcesError_1>

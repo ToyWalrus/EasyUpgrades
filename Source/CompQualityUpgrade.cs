@@ -12,7 +12,7 @@ namespace EasyUpgrades
         {
             if (parent.Faction == Faction.OfPlayer)
             {
-                if (!HasQualityUpgradeDesignation)
+                if (!HasQualityIncreaseDesignation)
                 {
                     yield return new Command_Action
                     {
@@ -21,13 +21,13 @@ namespace EasyUpgrades
                         defaultDesc = "EU.TryIncreaseQualityTooltip".Translate(),
                         action = () =>
                         {
-                            parent.Map.designationManager.AddDesignation(new Designation(parent, EasyUpgradesDesignationDefOf.QualityUpgrade));
+                            parent.Map.designationManager.AddDesignation(new Designation(parent, EasyUpgradesDesignationDefOf.IncreaseQuality));
                         }
                     };
                 }
             }
         }
 
-        bool HasQualityUpgradeDesignation => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.QualityUpgrade) != null;
+        bool HasQualityIncreaseDesignation => parent.Map.designationManager.DesignationOn(parent, EasyUpgradesDesignationDefOf.IncreaseQuality) != null;
     }
 }

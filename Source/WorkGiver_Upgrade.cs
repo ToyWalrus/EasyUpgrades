@@ -117,7 +117,6 @@ namespace EasyUpgrades
 
                 if (!pawn.Map.itemAvailability.ThingsAvailableAnywhere(neededResource, pawn))
                 {
-                    //Log.Message("Not enough " + neededThing.label + " available on the map");
                     missingResources.Add(neededThing);
                     continue;
                 }
@@ -130,11 +129,9 @@ namespace EasyUpgrades
                     {
                         available += nextThing.stackCount;
                         found.Add(nextThing);
-                        //Log.Message("Found some " + neededThing.label + " (" + nextThing.stackCount + ")");
 
                         if (available >= neededCount)
                         {
-                            //Log.Message("Have enough " + neededThing.label + " (" + available + ")");
                             hasEnough = true;
                             break;
                         }
