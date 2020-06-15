@@ -28,7 +28,7 @@
   <JobDef>
     <defName>IncreaseQuality_Crafting</defName>
     <driverClass>EasyUpgrades.JobDriver_IncreaseQuality</driverClass>
-    <reportString>attempting to increase quality for TargetA</reportString>
+    <reportString>attempting to increase TargetA quality</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
     <suspendable>false</suspendable>
   </JobDef>

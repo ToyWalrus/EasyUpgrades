@@ -14,7 +14,25 @@
   </DesignationDef>
 
   <DesignationDef>
-    <defName>IncreaseQuality</defName>
+    <defName>IncreaseQuality_Building</defName>
+    <texturePath>UI/DesQualityUp</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+
+  <DesignationDef>
+    <defName>IncreaseQuality_Apparel</defName>
+    <texturePath>UI/DesQualityUp</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+
+  <DesignationDef>
+    <defName>IncreaseQuality_Art</defName>
+    <texturePath>UI/DesQualityUp</texturePath>
+    <targetType>Thing</targetType>
+  </DesignationDef>
+
+  <DesignationDef>
+    <defName>IncreaseQuality_Item</defName>
     <texturePath>UI/DesQualityUp</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>

@@ -225,6 +225,7 @@ namespace EasyUpgrades
             float successChance = GetSuccessChance(pawn, thingModified);
             float failChance = GetFailChance(pawn, thingModified);
             float randVal = Random.Range(0f, 1f);
+            Log.Message("Current quality: " + q.GetLabel());
             Log.Message("Success Chance: " + successChance.ToString() + ", Fail Chance: " + failChance.ToString() + ", value: " + randVal.ToString());
 
             if (randVal < failChance)
@@ -271,7 +272,7 @@ namespace EasyUpgrades
             QualityCategory quality;
             thing.TryGetQuality(out quality);
 
-            float qualityChance = 0;
+            float qualityChance;
             switch (quality)
             {
                 case QualityCategory.Awful:
@@ -281,23 +282,23 @@ namespace EasyUpgrades
                     qualityChance = .9f;
                     break;
                 case QualityCategory.Normal:
-                    qualityChance = .75f;
+                    qualityChance = .85f;
                     break;
                 case QualityCategory.Good:
-                    qualityChance = .4f;
+                    qualityChance = .6f;
                     break;
                 case QualityCategory.Excellent:
-                    qualityChance = .2f;
+                    qualityChance = .25f;
                     break;
                 case QualityCategory.Masterwork:
                     qualityChance = .15f;
                     break;
                 default:
-                    break;
+                    return 0;
             }
 
             int skillLevel = pawn.skills.GetSkill(ActiveSkillDef).Level;
-            float skillPercent = skillLevel / 20;
+            float skillPercent = skillLevel / 20f;
             return qualityChance * skillPercent;
         }
 
@@ -309,6 +310,8 @@ namespace EasyUpgrades
             float qualityChance = 0;
             switch (quality)
             {
+                case QualityCategory.Awful:
+                    return 0;
                 case QualityCategory.Poor:
                     qualityChance = .05f;
                     break;
@@ -329,14 +332,14 @@ namespace EasyUpgrades
             }
 
             int skillLevel = pawn.skills.GetSkill(ActiveSkillDef).Level;
-            float skillPercent = (20 - skillLevel) / 20;
-            return qualityChance + skillPercent;
+            float skillPercent = (20 - skillLevel) / 20f;
+            return qualityChance + (skillPercent * .15f);
         }
 
         private void RemoveDesignationsForQualityUpgrade(Thing t)
         {
             DesignationManager manager = Map.designationManager;
-            manager.TryRemoveDesignationOn(t, EasyUpgradesDesignationDefOf.IncreaseQuality);
+            manager.RemoveAllDesignationsOn(t);
         }
 
         private float TotalWorkNeeded

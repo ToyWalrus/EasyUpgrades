@@ -9,9 +9,27 @@ namespace EasyUpgrades
 {
     class WorkGiver_IncreaseQuality : WorkGiver_Scanner
     {
+        private DesignationDef buildingDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Building;
+        private DesignationDef apparelDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Apparel;
+        private DesignationDef artDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Art;
+        private DesignationDef itemDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Item;
+        private bool IsAnyIncreaseQualityDesignation(Designation des) => des.def == buildingDes || des.def == apparelDes || des.def == artDes || des.def == itemDes;
+
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
-        {
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(EasyUpgradesDesignationDefOf.IncreaseQuality))
+        {            
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(buildingDes))
+            {
+                yield return designation.target.Thing;
+            }
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(apparelDes))
+            {
+                yield return designation.target.Thing;
+            }
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(artDes))
+            {
+                yield return designation.target.Thing;
+            }
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(itemDes))
             {
                 yield return designation.target.Thing;
             }
@@ -29,40 +47,33 @@ namespace EasyUpgrades
             }
             foreach (Designation des in pawn.Map.designationManager.AllDesignationsOn(t))
             {
-                if (des.def == EasyUpgradesDesignationDefOf.IncreaseQuality)
+                if (IsAnyIncreaseQualityDesignation(des))
                 {
                     List<ThingCountClass> resources;
-                    Log.Message("Increase quality for " + t.Label);
                     ThingDefCountClass neededResource = GetStuffNeededForQualityIncrease(t);
                     if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources)) return null;
 
-                    if (t.def.building != null)
+                    if (des.def == buildingDes)
                     {
-                        Log.Message("Thing is building!");
                         return MakeIncreaseBuildingQualityJob(t, pawn, resources);
                     }
-                    if (t.def.IsApparel)
+                    else if (des.def == apparelDes)
                     {
-                        Log.Message("Thing is apparel!");
                         return MakeIncreaseApparelQualityJob(t, pawn, resources);
                     }
-                    if (t.def.IsArt)
+                    else if (des.def == artDes)
                     {
-                        Log.Message("Thing is art!");
                         return MakeIncreaseArtQualityJob(t, pawn, resources);
                     }
-                    if (t.def.IsWeapon)
+                    else if (des.def == itemDes)
                     {
-                        Log.Message("Thing is weapon!");
                         return MakeIncreaseItemQualityJob(t, pawn, resources);
                     }
-                    Log.Message("Unknown item type for increase item quality job creation");
-                    return null;
-                }
+                }                
             }
             return null;
         }
-
+        
         private Job MakeIncreaseBuildingQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
         {
             if (!CanDoWorkType(WorkTypeDefOf.Construction, pawn)) return null;
@@ -154,12 +165,15 @@ namespace EasyUpgrades
         {
             if (pawn.workSettings.GetPriority(def) == 0)
             {
+                string reason;
                 if (pawn.WorkTypeIsDisabled(def))
                 {
-                    JobFailReason.Is("CannotPrioritizeWorkTypeDisabled".Translate(def.gerundLabel));
+                    reason = "CannotPrioritizeWorkTypeDisabled".Translate(def.gerundLabel);
+                    JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
                     return false;
                 }
-                JobFailReason.Is("CannotPrioritizeNotAssignedToWorkType".Translate(def.gerundLabel));
+                reason = "CannotPrioritizeNotAssignedToWorkType".Translate(def.gerundLabel);
+                JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
                 return false;
             }
             return true;
