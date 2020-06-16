@@ -51,7 +51,11 @@ namespace EasyUpgrades
                 {
                     List<ThingCountClass> resources;
                     ThingDefCountClass neededResource = GetStuffNeededForQualityIncrease(t);
-                    if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources)) return null;
+                    if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources)) 
+                    {
+                        JobFailReason.Is("EU.LackingQualityResource".Translate(neededResource.Label));
+                        return null;
+                    }
 
                     if (des.def == buildingDes)
                     {
@@ -77,7 +81,6 @@ namespace EasyUpgrades
         private Job MakeIncreaseBuildingQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
         {
             if (!CanDoWorkType(WorkTypeDefOf.Construction, pawn)) return null;
-            Log.Message("Try to increase building quality built from " + t.Stuff.label);
 
             Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Building, t);
             job.targetQueueB = new List<LocalTargetInfo>();
@@ -88,18 +91,18 @@ namespace EasyUpgrades
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
+            job.count = job.countQueue[0];
             return job;
         }
 
         private Job MakeIncreaseApparelQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
         {
             if (!CanDoWorkType(WorkTypeDefOf.Crafting, pawn)) return null;
-            Log.Message("Try to increase building quality built from " + t.Stuff);
 
             Building closestTailoringBench = GetClosestNeededCraftingBuilding(pawn, t);
             if (closestTailoringBench == null)
             {
-                Log.Message("No tailoring bench exists to increase apparel quality");
+                JobFailReason.Is("EU.NoTailoringBench".Translate());
                 return null;
             }
 
@@ -112,6 +115,7 @@ namespace EasyUpgrades
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
+            job.count = 1;
             return job;
         }
 
@@ -122,7 +126,7 @@ namespace EasyUpgrades
             Building closestCraftingBench = GetClosestNeededCraftingBuilding(pawn, t);
             if (closestCraftingBench == null)
             {
-                Log.Message("No crafting bench exists to increase item quality");
+                JobFailReason.Is("EU.NoCraftingBench".Translate());
                 return null;
             }
 
@@ -135,6 +139,7 @@ namespace EasyUpgrades
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
+            job.count = 1;
             return job;
         }
 
@@ -145,7 +150,7 @@ namespace EasyUpgrades
             Building closestSculptingBench = GetClosestNeededCraftingBuilding(pawn, t);
             if (closestSculptingBench == null)
             {
-                Log.Message("No sculpting bench exists to increase art quality");
+                JobFailReason.Is("EU.NoSculptingBench".Translate());
                 return null;
             }
 
@@ -158,6 +163,7 @@ namespace EasyUpgrades
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
+            job.count = 1;
             return job;
         }
 

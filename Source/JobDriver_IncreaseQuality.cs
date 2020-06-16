@@ -20,6 +20,8 @@ namespace EasyUpgrades
             ? StatDefOf.WorkSpeedGlobal
             : StatDefOf.ConstructionSpeed;
 
+        private Thing thingToWorkOn;
+
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             if (IsCraftingJob)
@@ -69,8 +71,8 @@ namespace EasyUpgrades
                 initAction = () =>
                 {
                     DestroyPlacedResources();
+                    RemoveDesignationsForQualityUpgrade(IsCraftingJob ? thingToWorkOn : TargetA.Thing);
                     NotifyQualityChanged(modify.actor);
-                    RemoveDesignationsForQualityUpgrade(IsCraftingJob ? TargetC.Thing : TargetA.Thing);
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
             };
@@ -80,16 +82,20 @@ namespace EasyUpgrades
 
         // Index A is first the item to be worked on, then the current resource to be gathered
         // Index B is the workstation to be worked at
-        // Index C is the item to be worked on (always)
         // Queue A is the resources to be gathered
         private IEnumerable<Toil> MakeToilsForCrafting()
         {
             this.FailOnForbidden(TargetIndex.A);
             this.FailOnForbidden(TargetIndex.B);
             Toil gotoWorkbench = Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.B);
+            Toil endGathering = Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.B);
 
             // Take item to workbench
             Toil gotoNextHaulThing = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnDespawnedNullOrForbidden(TargetIndex.A).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
+            yield return Toils_General.Do(() =>
+            {
+                thingToWorkOn = job.targetA.Thing;
+            });
             yield return gotoNextHaulThing;
             yield return Toils_Haul.StartCarryThing(TargetIndex.A);
             yield return gotoWorkbench;
@@ -98,14 +104,9 @@ namespace EasyUpgrades
             yield return findPlaceTarget;
 
             yield return Toils_Haul.PlaceHauledThingInCell(TargetIndex.C, findPlaceTarget, false);
-            yield return RecordPlacedResource(TargetIndex.A);
-            yield return Toils_General.Do(() =>
-            {
-                job.targetC = job.targetA;
-            });
 
             // Take items from queue to workbench
-            yield return Toils_Jump.JumpIf(gotoWorkbench, () => job.GetTargetQueue(TargetIndex.A).NullOrEmpty());
+            yield return Toils_Jump.JumpIf(endGathering, () => job.GetTargetQueue(TargetIndex.A).NullOrEmpty());
             Toil extract = Toils_JobTransforms.ExtractNextTargetFromQueue(TargetIndex.A);
             yield return extract;
 
@@ -123,7 +124,7 @@ namespace EasyUpgrades
             gotoNextHaulThing = null;
             findPlaceTarget = null;
 
-            yield return gotoWorkbench;
+            yield return endGathering;
         }
 
         // Index A is the building to be worked on
@@ -213,11 +214,15 @@ namespace EasyUpgrades
 
         private void NotifyQualityChanged(Pawn pawn)
         {
-            Thing thingModified = IsCraftingJob ? TargetC.Thing : TargetA.Thing;
-            QualityCategory q;
-            if (!thingModified.TryGetQuality(out q))
+            Thing thingModified = IsCraftingJob ? thingToWorkOn : TargetA.Thing;
+            QualityCategory curQuality;
+            if (!thingModified.TryGetQuality(out curQuality))
             {
                 Log.Error("Unable to get comp quality on " + thingModified.Label);
+
+                Log.Message("Other things A: " + (TargetA.Thing?.Label ?? "null"));
+                Log.Message("Other things B: " + (TargetB.Thing?.Label ?? "null"));
+                Log.Message("Other things C: " + (TargetC.Thing?.Label ?? "null"));
                 return;
             }
 
@@ -225,21 +230,39 @@ namespace EasyUpgrades
             float successChance = GetSuccessChance(pawn, thingModified);
             float failChance = GetFailChance(pawn, thingModified);
             float randVal = Random.Range(0f, 1f);
-            Log.Message("Current quality: " + q.GetLabel());
-            Log.Message("Success Chance: " + successChance.ToString() + ", Fail Chance: " + failChance.ToString() + ", value: " + randVal.ToString());
 
-            if (randVal < failChance)
+
+            string msg;
+            string itemLabel = thingModified.LabelNoCount;
+            float xp;
+            MessageTypeDef messageType;
+
+            if (randVal < successChance)
             {
-                Log.Message(pawn.Name + " messed up and lowered the item quality!");
+                msg = "EU.IncreaseQualityMessage_Success";
+                xp = (int)curQuality * 80f;
+                thingModified.TryGetComp<CompQuality>().SetQuality(curQuality + 1, ArtGenerationContext.Colony);
+                thingModified.HitPoints = thingModified.MaxHitPoints;
+                messageType = MessageTypeDefOf.PositiveEvent;
             }
-            else if (randVal < failChance + successChance)
+            else if (randVal < successChance + failChance)
             {
-                Log.Message(pawn.Name + " succeeded and increased the item quality!");
+                msg = "EU.IncreaseQualityMessage_Fail";
+                xp = (int)curQuality * 40f;
+                thingModified.TryGetComp<CompQuality>().SetQuality(curQuality - 1, ArtGenerationContext.Colony);
+                thingModified.HitPoints -= Mathf.RoundToInt(thingModified.MaxHitPoints / 10f);
+                messageType = MessageTypeDefOf.NegativeEvent;
             }
             else
             {
-                Log.Message(pawn.Name + " tried to upgrade the item but nothing seems changed about it");
+                msg = "EU.IncreaseQualityMessage_Neutral";
+                xp = (int)curQuality * 50f;
+                thingModified.HitPoints += Mathf.RoundToInt(thingModified.MaxHitPoints / 10f);
+                messageType = MessageTypeDefOf.NeutralEvent;
             }
+
+            pawn.skills.Learn(ActiveSkillDef, xp);
+            Messages.Message(msg.Translate(pawn.NameShortColored, itemLabel.Substring(0, itemLabel.IndexOf("(") - 1), Mathf.Clamp(successChance, 0f, 1f).ToStringPercent()), pawn, messageType);
         }
 
         private void DestroyPlacedResources()
@@ -247,12 +270,8 @@ namespace EasyUpgrades
             // Despawn used resources
             foreach (Thing used in resourcesPlaced)
             {
-                if (used.Destroyed)
-                {
-                    Log.Error("Tried to use up " + used.Label + " but it was already destroyed!");
-                }
-                else
-                {
+                if (!used.Destroyed)
+                {                 
                     used.Destroy();
                 }
             }
@@ -298,7 +317,7 @@ namespace EasyUpgrades
             }
 
             int skillLevel = pawn.skills.GetSkill(ActiveSkillDef).Level;
-            float skillPercent = skillLevel / 20f;
+            float skillPercent = skillLevel / 14f; // lvl 14 the base chance for increasing quality
             return qualityChance * skillPercent;
         }
 
@@ -313,16 +332,16 @@ namespace EasyUpgrades
                 case QualityCategory.Awful:
                     return 0;
                 case QualityCategory.Poor:
-                    qualityChance = .05f;
+                    qualityChance = .02f;
                     break;
                 case QualityCategory.Normal:
-                    qualityChance = .1f;
+                    qualityChance = .07f;
                     break;
                 case QualityCategory.Good:
-                    qualityChance = .15f;
+                    qualityChance = .12f;
                     break;
                 case QualityCategory.Excellent:
-                    qualityChance = .2f;
+                    qualityChance = .19f;
                     break;
                 case QualityCategory.Masterwork:
                     qualityChance = .25f;
@@ -348,7 +367,8 @@ namespace EasyUpgrades
             {
                 if (IsCraftingJob)
                 {
-                    return TargetC.Thing.def.recipeMaker.workAmount;
+                    // StatWorker_MarketValue.CalculableRecipe(thingToWorkOn.def).workAmount
+                    return thingToWorkOn.def.GetStatValueAbstract(StatDefOf.WorkToMake, thingToWorkOn.Stuff);
                 }
                 return Mathf.Clamp((TargetA.Thing as Building).GetStatValue(StatDefOf.WorkToBuild, true), 20f, 3000f);
             }

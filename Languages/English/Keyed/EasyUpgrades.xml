@@ -5,9 +5,18 @@
   <EU.IncreaseQuality>Increase quality</EU.IncreaseQuality>
 
   <EU.TryIncreaseQualityTooltip>Attempt to increase the quality of this item</EU.TryIncreaseQualityTooltip>
+  <EU.CannotIncreaseLegendaryQuality>Cannot increase the quality of a legendary item!</EU.CannotIncreaseLegendaryQuality>
   <EU.TryIncreaseQualityTooltipWithChance>Attempt to increase the quality of this item ({0}% chance)</EU.TryIncreaseQualityTooltipWithChance>
   <EU.LackingQualityResource>missing resource to use for quality increase ({0})</EU.LackingQualityResource>
 
+  <EU.NoTailoringBench>No tailoring bench exists to increase apparel quality</EU.NoTailoringBench>
+  <EU.NoSculptingBench>No sculpting bench exists to increase art quality</EU.NoSculptingBench>
+  <EU.NoCraftingBench>No crafting bench exists to increase item quality</EU.NoCraftingBench>
+
+  <EU.IncreaseQualityMessage_Success>{0} succeeded and increased the quality of a {1}! ({2} success chance)</EU.IncreaseQualityMessage_Success>
+  <EU.IncreaseQualityMessage_Fail>{0} messed up and lowered the quality of a {1}! ({2} success chance)</EU.IncreaseQualityMessage_Fail>
+  <EU.IncreaseQualityMessage_Neutral>{0} tried to increase the quality of a {1}, but only succeeded in repairing it a little. ({2} success chance)</EU.IncreaseQualityMessage_Neutral>
+  
   <EU.UnresearchedError>You don't have the required research completed for this action ({0})</EU.UnresearchedError>
   <EU.LackingResourcesError_1>missing required resources to upgrade ({0})</EU.LackingResourcesError_1>
   <EU.LackingResourcesError_2>missing required resources to upgrade ({0}, {1})</EU.LackingResourcesError_2>

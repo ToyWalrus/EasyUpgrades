@@ -3,10 +3,10 @@
 
   <!--Add the quality upgrade comp to things with quality-->
   <Operation Class="PatchOperationAdd">
-    <xpath>/Defs/ThingDef/comps[./li/compClass=CompQuality]</xpath>
+    <xpath>/Defs/ThingDef/comps[./li/compClass="CompQuality"]</xpath>
     <value>
       <li>
-        <compClass>EasyUpgrades.CompQualityUpgrade</compClass>
+        <compClass>EasyUpgrades.CompIncreaseQuality</compClass>
       </li>
     </value>
   </Operation>

@@ -126,7 +126,7 @@
     <Compile Include="Command_ModifyThing.cs" />
     <Compile Include="CompDowngrade.cs" />
     <Compile Include="CompProperties_Upgradable.cs" />
-    <Compile Include="CompQualityUpgrade.cs" />
+    <Compile Include="CompIncreaseQuality.cs" />
     <Compile Include="CompUpgrade.cs" />
     <Compile Include="EasyUpgrades.cs" />
     <Compile Include="JobDriver_DowngradeThing.cs" />

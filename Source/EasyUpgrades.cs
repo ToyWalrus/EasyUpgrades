@@ -28,7 +28,10 @@ namespace EasyUpgrades
 
         public static DesignationDef Upgrade;
         public static DesignationDef Downgrade;
-        public static DesignationDef IncreaseQuality;
+        public static DesignationDef IncreaseQuality_Building;
+        public static DesignationDef IncreaseQuality_Apparel;
+        public static DesignationDef IncreaseQuality_Item;
+        public static DesignationDef IncreaseQuality_Art;
     }
 
 
