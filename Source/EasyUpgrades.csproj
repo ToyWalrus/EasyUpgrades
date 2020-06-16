@@ -129,6 +129,7 @@
     <Compile Include="CompIncreaseQuality.cs" />
     <Compile Include="CompUpgrade.cs" />
     <Compile Include="EasyUpgrades.cs" />
+    <Compile Include="EasyUpgradesSettings.cs" />
     <Compile Include="JobDriver_DowngradeThing.cs" />
     <Compile Include="JobDriver_ModifyThing.cs" />
     <Compile Include="JobDriver_IncreaseQuality.cs" />

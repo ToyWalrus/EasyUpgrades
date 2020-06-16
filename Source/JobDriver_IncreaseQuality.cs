@@ -226,11 +226,9 @@ namespace EasyUpgrades
                 return;
             }
 
-            // Chance from 0..1
-            float successChance = GetSuccessChance(pawn, thingModified);
-            float failChance = GetFailChance(pawn, thingModified);
+            float successChance = EasyUpgrades.GetSuccessChance(pawn, ActiveSkillDef, thingModified);
+            float failChance = EasyUpgrades.GetFailChance(pawn, ActiveSkillDef, thingModified);
             float randVal = Random.Range(0f, 1f);
-
 
             string msg;
             string itemLabel = thingModified.LabelNoCount;
@@ -284,75 +282,6 @@ namespace EasyUpgrades
                 resourcesPlaced.Add(job.GetTarget(index).Thing);
                 Log.Message("Just placed " + job.GetTarget(index).Thing.stackCount + " " + job.GetTarget(index).Thing.def.label);
             });
-        }
-
-        private float GetSuccessChance(Pawn pawn, Thing thing)
-        {
-            QualityCategory quality;
-            thing.TryGetQuality(out quality);
-
-            float qualityChance;
-            switch (quality)
-            {
-                case QualityCategory.Awful:
-                    qualityChance = .95f;
-                    break;
-                case QualityCategory.Poor:
-                    qualityChance = .9f;
-                    break;
-                case QualityCategory.Normal:
-                    qualityChance = .85f;
-                    break;
-                case QualityCategory.Good:
-                    qualityChance = .6f;
-                    break;
-                case QualityCategory.Excellent:
-                    qualityChance = .25f;
-                    break;
-                case QualityCategory.Masterwork:
-                    qualityChance = .15f;
-                    break;
-                default:
-                    return 0;
-            }
-
-            int skillLevel = pawn.skills.GetSkill(ActiveSkillDef).Level;
-            float skillPercent = skillLevel / 14f; // lvl 14 the base chance for increasing quality
-            return qualityChance * skillPercent;
-        }
-
-        private float GetFailChance(Pawn pawn, Thing thing)
-        {
-            QualityCategory quality;
-            thing.TryGetQuality(out quality);
-
-            float qualityChance = 0;
-            switch (quality)
-            {
-                case QualityCategory.Awful:
-                    return 0;
-                case QualityCategory.Poor:
-                    qualityChance = .02f;
-                    break;
-                case QualityCategory.Normal:
-                    qualityChance = .07f;
-                    break;
-                case QualityCategory.Good:
-                    qualityChance = .12f;
-                    break;
-                case QualityCategory.Excellent:
-                    qualityChance = .19f;
-                    break;
-                case QualityCategory.Masterwork:
-                    qualityChance = .25f;
-                    break;
-                default:
-                    break;
-            }
-
-            int skillLevel = pawn.skills.GetSkill(ActiveSkillDef).Level;
-            float skillPercent = (20 - skillLevel) / 20f;
-            return qualityChance + (skillPercent * .15f);
         }
 
         private void RemoveDesignationsForQualityUpgrade(Thing t)

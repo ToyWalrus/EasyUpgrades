@@ -36,6 +36,12 @@
   <EU.UpgradeDoor>Upgrade this to an Autodoor</EU.UpgradeDoor>
   <EU.DowngradeDoor>Downgrade this to a regular door</EU.DowngradeDoor>
 
+  <EU.Settings.SuccessTitle>Base Success Chance</EU.Settings.SuccessTitle>
+  <EU.Settings.FailTitle>Base Fail Chance</EU.Settings.FailTitle>
+  <EU.Settings.IncreaseItemQualityTooltip>The base chance to increase an item's quality from {0} to {1}.\n\nThis is modified by the pawn's skill - at skill level {2} this will be the success chance; below level {2} the chance will be lower, if above it'll be higher.</EU.Settings.IncreaseItemQualityTooltip>
+  <EU.Settings.DecreaseItemQualityTooltip>The base chance to decrease an item's quality from {0} to {1}.\n\nThis is modified by the pawn's skill.</EU.Settings.DecreaseItemQualityTooltip>
+  <EU.Settings.XtoY>{0} to {1}: {2}</EU.Settings.XtoY>
+
   <!--<EU.UpgradeResearchBench>Upgrade this to a Hi-Tech Research Bench</EU.UpgradeResearchBench>
   <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>-->  
 </LanguageData>
