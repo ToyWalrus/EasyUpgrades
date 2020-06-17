@@ -7,7 +7,7 @@
   <EU.TryIncreaseQualityTooltip>Attempt to increase the quality of this item</EU.TryIncreaseQualityTooltip>
   <EU.CannotIncreaseLegendaryQuality>Cannot increase the quality of a legendary item!</EU.CannotIncreaseLegendaryQuality>
   <EU.TryIncreaseQualityTooltipWithChance>Attempt to increase the quality of this item ({0}% chance)</EU.TryIncreaseQualityTooltipWithChance>
-  <EU.LackingQualityResource>missing resource to use for quality increase ({0})</EU.LackingQualityResource>
+  <EU.LackingQualityResource>missing resource ({0})</EU.LackingQualityResource>
 
   <EU.NoTailoringBench>No tailoring bench exists to increase apparel quality</EU.NoTailoringBench>
   <EU.NoSculptingBench>No sculpting bench exists to increase art quality</EU.NoSculptingBench>
@@ -48,6 +48,4 @@
   <EU.Settings.MaterialsNeededFor>for {0} quality: {1}</EU.Settings.MaterialsNeededFor>
   <EU.Settings.MaterialsNeededTooltip>The amount of material needed to be gathered in relation to the item's original resource cost.\n\nFor example, if an item took 100 wood to craft and this value was .1, then 10 wood would be used for the quality increase task at the item's current quality level.</EU.Settings.MaterialsNeededTooltip>
 
-  <!--<EU.UpgradeResearchBench>Upgrade this to a Hi-Tech Research Bench</EU.UpgradeResearchBench>
-  <EU.DowngradeResearchBench>Downgrade this to a Simple Research Bench</EU.DowngradeResearchBench>-->  
 </LanguageData>

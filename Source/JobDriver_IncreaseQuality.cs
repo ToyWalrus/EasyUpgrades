@@ -93,18 +93,8 @@ namespace EasyUpgrades
             // Take item to workbench
             Toil gotoNextHaulThing = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnDespawnedNullOrForbidden(TargetIndex.A).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
             yield return gotoNextHaulThing;
-            yield return Toils_General.Do(() =>
-            {
-                if (IsArtisticJob)
-                {
-                    thingToWorkOn = job.targetA.Thing.TryMakeMinified();
-                    job.SetTarget(TargetIndex.A, thingToWorkOn);
-                }
-                else
-                {
-                    thingToWorkOn = job.targetA.Thing;
-                }
-            });
+
+            yield return SetThingToWorkOn();
             yield return Toils_Haul.StartCarryThing(TargetIndex.A);
             yield return gotoWorkbench;
 
@@ -167,6 +157,31 @@ namespace EasyUpgrades
             findPlaceTarget = null;
 
             yield return gotoThingToWorkOn;
+        }
+
+        private Toil SetThingToWorkOn()
+        {
+            return Toils_General.Do(() =>
+            {
+                if (IsArtisticJob && !(job.targetA.Thing is MinifiedThing))
+                {
+                    LocalTargetInfo info = job.targetA;
+                    Thing minifiedThing = job.targetA.Thing.TryMakeMinified();
+                    if (GenPlace.TryPlaceThing(minifiedThing, info.Cell, Map, ThingPlaceMode.Direct))
+                    {
+                        thingToWorkOn = minifiedThing;
+                        job.SetTarget(TargetIndex.A, thingToWorkOn);
+                    }
+                    else
+                    {
+                        Log.Error("Couldn't spawn the minified art thing!");
+                    }
+                }
+                else
+                {
+                    thingToWorkOn = job.targetA.Thing;
+                }
+            });
         }
 
         private Toil JumpToCollectNextThingForUpgrade(Toil gotoGetTargetToil, TargetIndex targetIdx)

@@ -12,24 +12,25 @@ namespace EasyUpgrades
         private DesignationDef apparelDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Apparel;
         private DesignationDef artDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Art;
         private DesignationDef itemDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Item;
+        private bool HasAnyIncreaseQualityDesignation => HasIncreaseApparelQualityDes || HasIncreaseBuildingQualityDes || HasIncreaseArtQualityDes || HasIncreaseItemQualityDes;
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            if (parent.Faction == null || parent.Faction == Faction.OfPlayer)
+            if (parent.Faction == Faction.OfPlayer)
             {
-                if (parent.def.IsArt && !HasIncreaseArtQualityDes)
+                if (parent.def.IsArt && !HasAnyIncreaseQualityDesignation)
                 {
-                    yield return CreateCommandForDesignation(new Designation(parent, artDes));
+                    yield return CreateCommandForDesignation(new Designation(parent, artDes));                    
                 }
-                else if (parent is Building && !HasIncreaseBuildingQualityDes)
+                else if (parent is Building && !HasAnyIncreaseQualityDesignation)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, buildingDes));
                 }
-                else if (parent.def.IsApparel && !HasIncreaseApparelQualityDes)
+                else if (parent.def.IsApparel && !HasAnyIncreaseQualityDesignation)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, apparelDes));
                 }
-                else if (parent.def.IsWeapon && !HasIncreaseItemQualityDes)
+                else if (parent.def.IsWeapon && !HasAnyIncreaseQualityDesignation)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, itemDes));
                 }
@@ -47,6 +48,7 @@ namespace EasyUpgrades
                 disabledReason = "EU.CannotIncreaseLegendaryQuality".Translate(),
                 action = () =>
                 {
+                    Log.Message("Designation added: " + des.def.label);
                     parent.Map.designationManager.AddDesignation(des);
                 }
             };

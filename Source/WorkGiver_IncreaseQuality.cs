@@ -15,22 +15,28 @@ namespace EasyUpgrades
         private DesignationDef itemDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Item;
         private bool IsAnyIncreaseQualityDesignation(Designation des) => des.def == buildingDes || des.def == apparelDes || des.def == artDes || des.def == itemDes;
 
+        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.Art | ThingRequestGroup.BuildingFrame | ThingRequestGroup.Apparel | ThingRequestGroup.MinifiedThing | ThingRequestGroup.Weapon);
+
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
-        {            
+        {
             foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(buildingDes))
             {
+                Log.Message("Building designation exists!");
                 yield return designation.target.Thing;
             }
             foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(apparelDes))
             {
+                Log.Message("Apparel designation exists!");
                 yield return designation.target.Thing;
             }
             foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(artDes))
             {
+                Log.Message("Art designation exists!");
                 yield return designation.target.Thing;
             }
             foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(itemDes))
             {
+                Log.Message("Weapon designation exists!");
                 yield return designation.target.Thing;
             }
         }
@@ -51,7 +57,7 @@ namespace EasyUpgrades
                 {
                     List<ThingCountClass> resources;
                     ThingDefCountClass neededResource = GetStuffNeededForQualityIncrease(t);
-                    if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources)) 
+                    if (!HasEnoughResourcesOfType(pawn, t, neededResource, out resources))
                     {
                         JobFailReason.Is("EU.LackingQualityResource".Translate(neededResource.Label));
                         return null;
@@ -73,11 +79,11 @@ namespace EasyUpgrades
                     {
                         return MakeIncreaseItemQualityJob(t, pawn, resources);
                     }
-                }                
+                }
             }
             return null;
         }
-        
+
         private Job MakeIncreaseBuildingQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
         {
             if (!CanDoWorkType(WorkTypeDefOf.Construction, pawn)) return null;
@@ -91,7 +97,7 @@ namespace EasyUpgrades
                 job.countQueue.Add(resource.Count);
             }
             job.haulMode = HaulMode.ToCellNonStorage;
-            job.count = job.countQueue[0];
+            job.count = job.countQueue.Count > 0 ? job.countQueue[0] : 1;
             return job;
         }
 
@@ -288,7 +294,7 @@ namespace EasyUpgrades
                     return null;
             }
 
-            return new ThingDefCountClass(neededThing, Mathf.CeilToInt(neededForNextQualityLevel * amountModifier));
+            return new ThingDefCountClass(neededThing, Mathf.Max(1, Mathf.CeilToInt(neededForNextQualityLevel * amountModifier)));
         }
 
         private Building GetClosestNeededCraftingBuilding(Pawn pawn, Thing t)
