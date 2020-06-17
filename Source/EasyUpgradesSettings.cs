@@ -8,18 +8,25 @@ namespace EasyUpgrades
     // https://rimworldwiki.com/wiki/Modding_Tutorials/ModSettings
     class EasyUpgradesSettings : ModSettings
     {
-        public static float increaseAwfulQualityChance = .95f;
-        public static float increasePoorQualityChance = .9f;
-        public static float increaseNormalQualityChance = .85f;
-        public static float increaseGoodQualityChance = .6f;
-        public static float increaseExcellentQualityChance = .25f;
-        public static float increaseMasterworkQualityChance = .15f;
+        public static float increaseAwfulQualityChance;
+        public static float increasePoorQualityChance;
+        public static float increaseNormalQualityChance;
+        public static float increaseGoodQualityChance;
+        public static float increaseExcellentQualityChance;
+        public static float increaseMasterworkQualityChance;
 
-        public static float decreasePoorQualityChance = .02f;
-        public static float decreaseNormalQualityChance = .07f;
-        public static float decreaseGoodQualityChance = .12f;
-        public static float decreaseExcellentQualityChance = .19f;
-        public static float decreaseMasterworkQualityChance = .25f;
+        public static float decreasePoorQualityChance;
+        public static float decreaseNormalQualityChance;
+        public static float decreaseGoodQualityChance;
+        public static float decreaseExcellentQualityChance;
+        public static float decreaseMasterworkQualityChance;
+
+        public static float neededMaterialsAwfulQuality;
+        public static float neededMaterialsPoorQuality;
+        public static float neededMaterialsNormalQuality;
+        public static float neededMaterialsGoodQuality;
+        public static float neededMaterialsExcellentQuality;
+        public static float neededMaterialsMasterworkQuality;
 
         public override void ExposeData()
         {
@@ -35,6 +42,13 @@ namespace EasyUpgrades
             Scribe_Values.Look(ref decreaseGoodQualityChance, "decreaseGoodQualityChance", .12f);
             Scribe_Values.Look(ref decreaseExcellentQualityChance, "decreaseExcellentQualityChance", .19f);
             Scribe_Values.Look(ref decreaseMasterworkQualityChance, "decreaseMasterworkQualityChance", .25f);
+
+            Scribe_Values.Look(ref neededMaterialsAwfulQuality, "neededMaterialsAwfulQuality", .2f);
+            Scribe_Values.Look(ref neededMaterialsPoorQuality, "neededMaterialsPoorQuality", .6f);
+            Scribe_Values.Look(ref neededMaterialsNormalQuality, "neededMaterialsNormalQuality", .9f);
+            Scribe_Values.Look(ref neededMaterialsGoodQuality, "neededMaterialsGoodQuality", 1.25f);
+            Scribe_Values.Look(ref neededMaterialsExcellentQuality, "neededMaterialsExcellentQuality", 2f);
+            Scribe_Values.Look(ref neededMaterialsMasterworkQuality, "neededMaterialsMasterworkQuality", 3f);
 
             base.ExposeData();
         }
@@ -57,7 +71,7 @@ namespace EasyUpgrades
 
             Listing_Standard listingStandard = new Listing_Standard();
 
-            listingStandard.Begin(new Rect(inRect.x, inRect.y, inRect.width / 2.15f, inRect.height));
+            listingStandard.Begin(new Rect(inRect.x, inRect.y, inRect.width / 2.15f, inRect.height / 1.5f));
             listingStandard.Label("EU.Settings.SuccessTitle".Translate());
 
             listingStandard.GapLine(2);
@@ -87,7 +101,7 @@ namespace EasyUpgrades
 
             listingStandard.End();
 
-            listingStandard.Begin(new Rect(inRect.width / 2, inRect.y, inRect.width / 2f, inRect.height));
+            listingStandard.Begin(new Rect(inRect.width / 2, inRect.y, inRect.width / 2f, inRect.height / 1.5f));
             listingStandard.Label("EU.Settings.FailTitle".Translate());
 
             listingStandard.GapLine(2);
@@ -112,6 +126,40 @@ namespace EasyUpgrades
             EasyUpgradesSettings.decreaseMasterworkQualityChance = listingStandard.Slider(EasyUpgradesSettings.decreaseMasterworkQualityChance, 0f, 1f);
 
             listingStandard.End();
+
+
+            listingStandard.Begin(new Rect(inRect.x, inRect.height / 1.5f, inRect.width, 35));
+            listingStandard.Label("EU.Settings.MaterialsTitle".Translate());
+            listingStandard.GapLine(2);
+            listingStandard.Gap(6);
+            listingStandard.End();
+
+            listingStandard.Begin(new Rect(inRect.x, inRect.height / 1.5f + 35, inRect.width / 2.15f, 150f));
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(awful, EasyUpgradesSettings.neededMaterialsAwfulQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsAwfulQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsAwfulQuality, 0f, 10f);
+
+            listingStandard.Gap(1);
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(poor, EasyUpgradesSettings.neededMaterialsPoorQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsPoorQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsPoorQuality, 0f, 10f);
+
+            listingStandard.Gap(1);
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(norm, EasyUpgradesSettings.neededMaterialsNormalQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsNormalQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsNormalQuality, 0f, 10f);
+            listingStandard.End();
+
+            listingStandard.Begin(new Rect(inRect.width / 2, inRect.height / 1.5f + 35, inRect.width / 2.15f, 150f));
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(good, EasyUpgradesSettings.neededMaterialsGoodQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsGoodQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsGoodQuality, 0f, 10f);
+
+            listingStandard.Gap(1);
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(excel, EasyUpgradesSettings.neededMaterialsExcellentQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsExcellentQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsExcellentQuality, 0f, 10f);
+
+            listingStandard.Gap(1);
+            listingStandard.Label("EU.Settings.MaterialsNeededFor".Translate(master, EasyUpgradesSettings.neededMaterialsMasterworkQuality.ToString()), -1, "EU.Settings.MaterialsNeededTooltip".Translate());
+            EasyUpgradesSettings.neededMaterialsMasterworkQuality = listingStandard.Slider(EasyUpgradesSettings.neededMaterialsMasterworkQuality, 0f, 10f);
+            listingStandard.End();
+
             base.DoSettingsWindowContents(inRect);
         }
 

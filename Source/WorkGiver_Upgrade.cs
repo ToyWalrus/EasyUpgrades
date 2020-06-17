@@ -43,15 +43,12 @@ namespace EasyUpgrades
                     WorkTypeDef def = WorkTypeDefOf.Construction;
                     if (pawn.workSettings.GetPriority(def) == 0)
                     {
-                        string reason;
                         if (pawn.WorkTypeIsDisabled(def))
                         {
-                            reason = "CannotPrioritizeWorkTypeDisabled".Translate(def.gerundLabel);
-                            JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
+                            JobFailReason.Is("EU.WorkTypeDisabled".Translate(def.gerundLabel));
                             return null;
                         }
-                        reason = "CannotPrioritizeNotAssignedToWorkType".Translate(def.gerundLabel);
-                        JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
+                        JobFailReason.Is("EU.WorkTypeNotAssigned".Translate(def.gerundLabel));
                         return null;
                     }
 

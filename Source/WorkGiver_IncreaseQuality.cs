@@ -171,15 +171,12 @@ namespace EasyUpgrades
         {
             if (pawn.workSettings.GetPriority(def) == 0)
             {
-                string reason;
                 if (pawn.WorkTypeIsDisabled(def))
                 {
-                    reason = "CannotPrioritizeWorkTypeDisabled".Translate(def.gerundLabel);
-                    JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
+                    JobFailReason.Is("EU.WorkTypeDisabled".Translate(def.gerundLabel));
                     return false;
                 }
-                reason = "CannotPrioritizeNotAssignedToWorkType".Translate(def.gerundLabel);
-                JobFailReason.Is(reason.Substring(reason.IndexOf(":") + 2));
+                JobFailReason.Is("EU.WorkTypeNotAssigned".Translate(def.gerundLabel));
                 return false;
             }
             return true;
@@ -270,25 +267,24 @@ namespace EasyUpgrades
             switch (currentQuality)
             {
                 case QualityCategory.Awful:
-                    neededForNextQualityLevel *= 0.2f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsAwfulQuality;
                     break;
                 case QualityCategory.Poor:
-                    neededForNextQualityLevel *= 0.6f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsPoorQuality;
                     break;
                 case QualityCategory.Normal:
-                    neededForNextQualityLevel *= 0.9f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsNormalQuality;
                     break;
                 case QualityCategory.Good:
-                    neededForNextQualityLevel *= 1.25f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsGoodQuality;
                     break;
                 case QualityCategory.Excellent:
-                    neededForNextQualityLevel *= 2f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsExcellentQuality;
                     break;
                 case QualityCategory.Masterwork:
-                    neededForNextQualityLevel *= 3f;
+                    neededForNextQualityLevel *= EasyUpgradesSettings.neededMaterialsMasterworkQuality;
                     break;
-                case QualityCategory.Legendary:
-                    Log.Message("Can't increase quality of a legendary thing!");
+                default:
                     return null;
             }
 

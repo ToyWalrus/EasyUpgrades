@@ -10,7 +10,7 @@ namespace EasyUpgrades
     {
         List<Thing> resourcesPlaced;
         private bool IsCraftingJob => job.def == EasyUpgradesJobDefOf.IncreaseQuality_Crafting;
-        private bool IsArtisticJob => job.GetTarget(TargetIndex.B).Thing?.def?.defName == "SculptingTable";
+        private bool IsArtisticJob => job.GetTarget(TargetIndex.B).Thing?.def?.defName == "TableSculpting";
         private SkillDef ActiveSkillDef => IsArtisticJob
             ? SkillDefOf.Artistic
             : IsCraftingJob
@@ -92,11 +92,19 @@ namespace EasyUpgrades
 
             // Take item to workbench
             Toil gotoNextHaulThing = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnDespawnedNullOrForbidden(TargetIndex.A).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
+            yield return gotoNextHaulThing;
             yield return Toils_General.Do(() =>
             {
-                thingToWorkOn = job.targetA.Thing;
+                if (IsArtisticJob)
+                {
+                    thingToWorkOn = job.targetA.Thing.TryMakeMinified();
+                    job.SetTarget(TargetIndex.A, thingToWorkOn);
+                }
+                else
+                {
+                    thingToWorkOn = job.targetA.Thing;
+                }
             });
-            yield return gotoNextHaulThing;
             yield return Toils_Haul.StartCarryThing(TargetIndex.A);
             yield return gotoWorkbench;
 
@@ -269,7 +277,7 @@ namespace EasyUpgrades
             foreach (Thing used in resourcesPlaced)
             {
                 if (!used.Destroyed)
-                {                 
+                {
                     used.Destroy();
                 }
             }
