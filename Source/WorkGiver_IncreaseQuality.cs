@@ -7,36 +7,16 @@ using Verse.AI;
 
 namespace EasyUpgrades
 {
-    class WorkGiver_IncreaseQuality : WorkGiver_Scanner
+    abstract class WorkGiver_IncreaseQuality : WorkGiver_Scanner
     {
-        private DesignationDef buildingDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Building;
-        private DesignationDef apparelDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Apparel;
-        private DesignationDef artDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Art;
-        private DesignationDef itemDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Item;
-        private bool IsAnyIncreaseQualityDesignation(Designation des) => des.def == buildingDes || des.def == apparelDes || des.def == artDes || des.def == itemDes;
+        protected virtual DesignationDef Designation => null;
 
-        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.Art | ThingRequestGroup.BuildingFrame | ThingRequestGroup.Apparel | ThingRequestGroup.MinifiedThing | ThingRequestGroup.Weapon);
+        protected bool HasIncreaseQualityDesignation(Designation des) => des.def == Designation;
 
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
         {
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(buildingDes))
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(Designation))
             {
-                Log.Message("Building designation exists!");
-                yield return designation.target.Thing;
-            }
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(apparelDes))
-            {
-                Log.Message("Apparel designation exists!");
-                yield return designation.target.Thing;
-            }
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(artDes))
-            {
-                Log.Message("Art designation exists!");
-                yield return designation.target.Thing;
-            }
-            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(itemDes))
-            {
-                Log.Message("Weapon designation exists!");
                 yield return designation.target.Thing;
             }
         }
@@ -53,7 +33,7 @@ namespace EasyUpgrades
             }
             foreach (Designation des in pawn.Map.designationManager.AllDesignationsOn(t))
             {
-                if (IsAnyIncreaseQualityDesignation(des))
+                if (HasIncreaseQualityDesignation(des))
                 {
                     List<ThingCountClass> resources;
                     ThingDefCountClass neededResource = GetStuffNeededForQualityIncrease(t);
@@ -63,117 +43,15 @@ namespace EasyUpgrades
                         return null;
                     }
 
-                    if (des.def == buildingDes)
-                    {
-                        return MakeIncreaseBuildingQualityJob(t, pawn, resources);
-                    }
-                    else if (des.def == apparelDes)
-                    {
-                        return MakeIncreaseApparelQualityJob(t, pawn, resources);
-                    }
-                    else if (des.def == artDes)
-                    {
-                        return MakeIncreaseArtQualityJob(t, pawn, resources);
-                    }
-                    else if (des.def == itemDes)
-                    {
-                        return MakeIncreaseItemQualityJob(t, pawn, resources);
-                    }
+                    return MakeIncreaseQualityJob(t, pawn, resources);
                 }
             }
             return null;
         }
 
-        private Job MakeIncreaseBuildingQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
-        {
-            if (!CanDoWorkType(WorkTypeDefOf.Construction, pawn)) return null;
+        protected abstract Job MakeIncreaseQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources);
 
-            Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Building, t);
-            job.targetQueueB = new List<LocalTargetInfo>();
-            job.countQueue = new List<int>();
-            foreach (ThingCountClass resource in resources)
-            {
-                job.targetQueueB.Add(resource.thing);
-                job.countQueue.Add(resource.Count);
-            }
-            job.haulMode = HaulMode.ToCellNonStorage;
-            job.count = job.countQueue.Count > 0 ? job.countQueue[0] : 1;
-            return job;
-        }
-
-        private Job MakeIncreaseApparelQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
-        {
-            if (!CanDoWorkType(WorkTypeDefOf.Crafting, pawn)) return null;
-
-            Building closestTailoringBench = GetClosestNeededCraftingBuilding(pawn, t);
-            if (closestTailoringBench == null)
-            {
-                JobFailReason.Is("EU.NoTailoringBench".Translate());
-                return null;
-            }
-
-            Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Crafting, t, closestTailoringBench);
-            job.targetQueueA = new List<LocalTargetInfo>();
-            job.countQueue = new List<int>();
-            foreach (ThingCountClass resource in resources)
-            {
-                job.targetQueueA.Add(resource.thing);
-                job.countQueue.Add(resource.Count);
-            }
-            job.haulMode = HaulMode.ToCellNonStorage;
-            job.count = 1;
-            return job;
-        }
-
-        private Job MakeIncreaseItemQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
-        {
-            if (!CanDoWorkType(WorkTypeDefOf.Crafting, pawn)) return null;
-
-            Building closestCraftingBench = GetClosestNeededCraftingBuilding(pawn, t);
-            if (closestCraftingBench == null)
-            {
-                JobFailReason.Is("EU.NoCraftingBench".Translate());
-                return null;
-            }
-
-            Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Crafting, t, closestCraftingBench);
-            job.targetQueueA = new List<LocalTargetInfo>();
-            job.countQueue = new List<int>();
-            foreach (ThingCountClass resource in resources)
-            {
-                job.targetQueueA.Add(resource.thing);
-                job.countQueue.Add(resource.Count);
-            }
-            job.haulMode = HaulMode.ToCellNonStorage;
-            job.count = 1;
-            return job;
-        }
-
-        private Job MakeIncreaseArtQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
-        {
-            if (!CanDoWorkType(WorkTypeDefOf.Crafting, pawn)) return null;
-
-            Building closestSculptingBench = GetClosestNeededCraftingBuilding(pawn, t);
-            if (closestSculptingBench == null)
-            {
-                JobFailReason.Is("EU.NoSculptingBench".Translate());
-                return null;
-            }
-
-            Job job = JobMaker.MakeJob(EasyUpgradesJobDefOf.IncreaseQuality_Crafting, t, closestSculptingBench);
-            job.targetQueueA = new List<LocalTargetInfo>();
-            job.countQueue = new List<int>();
-            foreach (ThingCountClass resource in resources)
-            {
-                job.targetQueueA.Add(resource.thing);
-                job.countQueue.Add(resource.Count);
-            }
-            job.haulMode = HaulMode.ToCellNonStorage;
-            job.count = 1;
-            return job;
-        }
-
-        private bool CanDoWorkType(WorkTypeDef def, Pawn pawn)
+        protected bool CanDoWorkType(WorkTypeDef def, Pawn pawn)
         {
             if (pawn.workSettings.GetPriority(def) == 0)
             {
@@ -186,6 +64,15 @@ namespace EasyUpgrades
                 return false;
             }
             return true;
+        }
+
+        protected Building GetClosestNeededCraftingBuilding(Pawn pawn, Thing t)
+        {
+            List<string> defNames = t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
+            return pawn.Map.listerBuildings.allBuildingsColonist
+                .Where((b) => defNames.Contains(b.def.defName) && !b.IsForbidden(pawn) && !b.IsBurning())
+                .OrderBy((b) => (b.Position - pawn.Position).LengthManhattan)
+                .FirstOrDefault();
         }
 
         private bool HasEnoughResourcesOfType(Pawn pawn, Thing t, ThingDefCountClass stuffDef, out List<ThingCountClass> resources)
@@ -295,15 +182,6 @@ namespace EasyUpgrades
             }
 
             return new ThingDefCountClass(neededThing, Mathf.Max(1, Mathf.CeilToInt(neededForNextQualityLevel * amountModifier)));
-        }
-
-        private Building GetClosestNeededCraftingBuilding(Pawn pawn, Thing t)
-        {
-            List<string> defNames = t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
-            return pawn.Map.listerBuildings.allBuildingsColonist
-                .Where((b) => defNames.Contains(b.def.defName) && !b.IsForbidden(pawn) && !b.IsBurning())
-                .OrderBy((b) => (b.Position - pawn.Position).LengthManhattan)
-                .FirstOrDefault();
         }
     }
 }

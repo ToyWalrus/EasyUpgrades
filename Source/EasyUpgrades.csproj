@@ -136,6 +136,10 @@
     <Compile Include="JobDriver_UpgradeThing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkGiver_Downgrade.cs" />
+    <Compile Include="WorkGiver_IncreaseApparelQuality.cs" />
+    <Compile Include="WorkGiver_IncreaseArtQuality.cs" />
+    <Compile Include="WorkGiver_IncreaseBuildingQuality.cs" />
+    <Compile Include="WorkGiver_IncreaseItemQuality.cs" />
     <Compile Include="WorkGiver_Upgrade.cs" />
     <Compile Include="WorkGiver_IncreaseQuality.cs" />
   </ItemGroup>

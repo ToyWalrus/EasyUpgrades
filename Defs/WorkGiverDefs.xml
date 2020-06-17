@@ -32,7 +32,7 @@
   <WorkGiverDef>
     <defName>IncreaseQuality_Building</defName>
     <label>attempt to increase the quality of this item</label>
-    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseBuildingQuality</giverClass>
     <workType>Construction</workType>
     <verb>increase quality</verb>
     <gerund>increasing quality for</gerund>
@@ -45,7 +45,7 @@
   <WorkGiverDef>
     <defName>IncreaseQuality_Apparel</defName>
     <label>attempt to increase the quality of this item</label>
-    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseApparelQuality</giverClass>
     <workType>Tailoring</workType>
     <verb>increase quality</verb>
     <gerund>increasing quality for</gerund>
@@ -58,7 +58,7 @@
   <WorkGiverDef>
     <defName>IncreaseQuality_Item</defName>
     <label>attempt to increase the quality of this item</label>
-    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseItemQuality</giverClass>
     <workType>Crafting</workType>
     <verb>increase quality</verb>
     <gerund>increasing quality for</gerund>
@@ -71,7 +71,7 @@
   <WorkGiverDef>
     <defName>IncreaseQuality_Art</defName>
     <label>attempt to increase the quality of this item</label>
-    <giverClass>EasyUpgrades.WorkGiver_IncreaseQuality</giverClass>
+    <giverClass>EasyUpgrades.WorkGiver_IncreaseArtQuality</giverClass>
     <workType>Art</workType>
     <verb>increase quality</verb>
     <gerund>increasing quality for</gerund>

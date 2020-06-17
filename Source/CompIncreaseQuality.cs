@@ -48,7 +48,6 @@ namespace EasyUpgrades
                 disabledReason = "EU.CannotIncreaseLegendaryQuality".Translate(),
                 action = () =>
                 {
-                    Log.Message("Designation added: " + des.def.label);
                     parent.Map.designationManager.AddDesignation(des);
                 }
             };

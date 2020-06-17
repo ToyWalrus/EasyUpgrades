@@ -303,7 +303,6 @@ namespace EasyUpgrades
             return Toils_General.Do(() =>
             {
                 resourcesPlaced.Add(job.GetTarget(index).Thing);
-                Log.Message("Just placed " + job.GetTarget(index).Thing.stackCount + " " + job.GetTarget(index).Thing.def.label);
             });
         }
 
