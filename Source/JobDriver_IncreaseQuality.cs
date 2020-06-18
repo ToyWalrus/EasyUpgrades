@@ -243,17 +243,14 @@ namespace EasyUpgrades
         private bool NotifyQualityChanged(Pawn pawn)
         {
             Thing thingModified = IsCraftingJob ? thingToWorkOn : TargetA.Thing;
-            Log.Message("Try change quality for " + thingModified.Label);
-            Log.Message("Minified? " + (thingModified is MinifiedThing).ToString());
-
             QualityCategory curQuality;
             if (!thingModified.TryGetQuality(out curQuality))
             {
-                Log.Error("Unable to get comp quality on " + thingModified.Label);
+                //Log.Error("Unable to get comp quality on " + thingModified.Label);
 
-                Log.Message("Other things A: " + (TargetA.Thing?.Label ?? "null"));
-                Log.Message("Other things B: " + (TargetB.Thing?.Label ?? "null"));
-                Log.Message("Other things C: " + (TargetC.Thing?.Label ?? "null"));
+                //Log.Message("Other things A: " + (TargetA.Thing?.Label ?? "null"));
+                //Log.Message("Other things B: " + (TargetB.Thing?.Label ?? "null"));
+                //Log.Message("Other things C: " + (TargetC.Thing?.Label ?? "null"));
                 return false;
             }
 
@@ -317,7 +314,6 @@ namespace EasyUpgrades
             return Toils_General.Do(() =>
             {
                 resourcesPlaced.Add(job.GetTarget(index).Thing);
-                Log.Message("Placed " + job.GetTarget(index).Thing.Label);
             });
         }
 
@@ -325,6 +321,12 @@ namespace EasyUpgrades
         {            
             DesignationManager manager = Map.designationManager;
             manager.RemoveAllDesignationsOn(t);
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_References.Look<Thing>(ref thingToWorkOn, "thingToWorkOn");
         }
 
         private float TotalWorkNeeded
@@ -338,6 +340,7 @@ namespace EasyUpgrades
                 }
                 if (IsCraftingJob)
                 {
+                    if (thingToWorkOn == null) return 0;
                     return Mathf.Clamp(thingToWorkOn.def.GetStatValueAbstract(StatDefOf.WorkToMake, thingToWorkOn.Stuff) / (float)pawn.skills.GetSkill(ActiveSkill).levelInt, 1f, 200f);
                 }
                 return Mathf.Clamp((TargetA.Thing as Building).GetStatValue(StatDefOf.WorkToBuild, true), 20f, 200f);

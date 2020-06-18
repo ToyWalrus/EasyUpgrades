@@ -81,6 +81,24 @@ namespace EasyUpgrades
                 .FirstOrDefault();
         }
 
+        protected string GetNeededCraftingBenchName(Thing t)
+        {
+            try
+            {
+                if (t is MinifiedThing)
+                {
+                    return (t as MinifiedThing).InnerThing.def.recipeMaker.recipeUsers.ConvertAll((def) => def.label).First();
+                }
+                else
+                {
+                    return t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.label).First();
+                }
+            } catch
+            {
+                return "";
+            }
+        }
+
         private bool HasEnoughResourcesOfType(Pawn pawn, Thing t, ThingDefCountClass stuffDef, out List<ThingCountClass> resources)
         {
             resources = new List<ThingCountClass>();

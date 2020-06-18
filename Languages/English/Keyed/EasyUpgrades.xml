@@ -8,10 +8,7 @@
   <EU.CannotIncreaseLegendaryQuality>Cannot increase the quality of a legendary item!</EU.CannotIncreaseLegendaryQuality>
   <EU.TryIncreaseQualityTooltipWithChance>Attempt to increase the quality of this item ({0}% chance)</EU.TryIncreaseQualityTooltipWithChance>
   <EU.LackingQualityResource>missing resource ({0})</EU.LackingQualityResource>
-
-  <EU.NoTailoringBench>No tailoring bench exists to increase apparel quality</EU.NoTailoringBench>
-  <EU.NoSculptingBench>No sculpting bench exists to increase art quality</EU.NoSculptingBench>
-  <EU.NoCraftingBench>No crafting bench exists to increase item quality</EU.NoCraftingBench>
+  <EU.MissingWorkStation>missing required work station ({0})</EU.MissingWorkStation>
 
   <EU.WorkTypeDisabled>will never do {0}</EU.WorkTypeDisabled>
   <EU.WorkTypeNotAssigned>not assigned to {0}</EU.WorkTypeNotAssigned>
@@ -24,21 +21,22 @@
   <EU.LackingResourcesError_1>missing required resources to upgrade ({0})</EU.LackingResourcesError_1>
   <EU.LackingResourcesError_2>missing required resources to upgrade ({0}, {1})</EU.LackingResourcesError_2>
 
-  <EU.UpgradeStove>Upgrade this to an Electric Stove</EU.UpgradeStove>
-  <EU.DowngradeStove>Downgrade this to a Fueled Stove</EU.DowngradeStove>
+  <EU.UpgradeStove>Upgrade this to an electric stove</EU.UpgradeStove>
+  <EU.DowngradeStove>Downgrade this to a fueled stove</EU.DowngradeStove>
 
-  <EU.UpgradeSmithy>Upgrade this to an Electric Smithy</EU.UpgradeSmithy>
-  <EU.DowngradeSmithy>Downgrade this to a Fueled Smithy</EU.DowngradeSmithy>
+  <EU.UpgradeSmithy>Upgrade this to an electric smithy</EU.UpgradeSmithy>
+  <EU.DowngradeSmithy>Downgrade this to a fueled smithy</EU.DowngradeSmithy>
 
-  <EU.UpgradeTailoringBench>Upgrade this to an Electric Tailoring Bench</EU.UpgradeTailoringBench>
-  <EU.DowngradeTailoringBench>Downgrade this to a Hand Tailoring Bench</EU.DowngradeTailoringBench>
+  <EU.UpgradeTailoringBench>Upgrade this to an electric eailoring bench</EU.UpgradeTailoringBench>
+  <EU.DowngradeTailoringBench>Downgrade this to a hand tailoring bench</EU.DowngradeTailoringBench>
 
-  <EU.UpgradeGenerator>Upgrade this to a Chemfuel Powered Generator</EU.UpgradeGenerator>
-  <EU.DowngradeGenerator>Downgrade this to a Wood Fired Generator</EU.DowngradeGenerator>
+  <EU.UpgradeGenerator>Upgrade this to a chemfuel powered generator</EU.UpgradeGenerator>
+  <EU.DowngradeGenerator>Downgrade this to a wood fired generator</EU.DowngradeGenerator>
 
-  <EU.UpgradeDoor>Upgrade this to an Autodoor</EU.UpgradeDoor>
+  <EU.UpgradeDoor>Upgrade this to an autodoor</EU.UpgradeDoor>
   <EU.DowngradeDoor>Downgrade this to a regular door</EU.DowngradeDoor>
 
+  <EU.Settings.Title>Easy Upgrades Settings</EU.Settings.Title>
   <EU.Settings.SuccessTitle>Base Success Chance</EU.Settings.SuccessTitle>
   <EU.Settings.FailTitle>Base Fail Chance</EU.Settings.FailTitle>
   <EU.Settings.MaterialsTitle>Materials Multiplier</EU.Settings.MaterialsTitle>

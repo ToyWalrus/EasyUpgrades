@@ -7,7 +7,7 @@
     <giverClass>EasyUpgrades.WorkGiver_Upgrade</giverClass>
     <workType>Construction</workType>    
     <verb>upgrade</verb>
-    <gerund>upgrading to</gerund>
+    <gerund>upgrading</gerund>
     <requiredCapacities>
       <li>Manipulation</li>
     </requiredCapacities>
@@ -21,7 +21,7 @@
     <giverClass>EasyUpgrades.WorkGiver_Downgrade</giverClass>
     <workType>Construction</workType>
     <verb>downgrade</verb>
-    <gerund>downgrading to</gerund>
+    <gerund>downgrading</gerund>
     <requiredCapacities>
       <li>Manipulation</li>
     </requiredCapacities>

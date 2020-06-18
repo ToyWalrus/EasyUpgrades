@@ -24,7 +24,7 @@ namespace EasyUpgrades
             Building closestSculptingBench = GetClosestNeededCraftingBuilding(pawn, t);
             if (closestSculptingBench == null)
             {
-                JobFailReason.Is("EU.NoSculptingBench".Translate());
+                JobFailReason.Is("EU.MissingWorkStation".Translate(GetNeededCraftingBenchName(t)));
                 return null;
             }
 

@@ -168,7 +168,7 @@ namespace EasyUpgrades
 
         public override string SettingsCategory()
         {
-            return "Easy Upgrades Settings";
+            return "EU.Settings.Title".Translate();
         }
     }
 }

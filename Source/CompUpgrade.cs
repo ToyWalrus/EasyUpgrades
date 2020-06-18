@@ -21,12 +21,19 @@ namespace EasyUpgrades
             {
                 if (!HasUpgradeDesignation)
                 {
+                    bool disabled = false;
+                    if (Props.researchPrerequisite != null)
+                    {
+                        disabled = Find.ResearchManager.GetProgress(Props.researchPrerequisite) < Props.researchPrerequisite.baseCost;
+                    }
                     yield return new Command_ModifyThing
                     {
                         icon = ContentFinder<Texture2D>.Get("UI/Up"),
                         defaultLabel = "EU.Upgrade".Translate(),
                         defaultDesc = Props.keyedTooltipString.Translate(),
-                        currentThing = this.parent,
+                        disabled = disabled,
+                        disabledReason = "EU.UnresearchedError".Translate(Props.researchPrerequisite.label),
+                        currentThing = parent,
                         def = EasyUpgradesDesignationDefOf.Upgrade
                     };
                 }

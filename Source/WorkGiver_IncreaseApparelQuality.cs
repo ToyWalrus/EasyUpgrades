@@ -16,7 +16,7 @@ namespace EasyUpgrades
             Building closestTailoringBench = GetClosestNeededCraftingBuilding(pawn, t);
             if (closestTailoringBench == null)
             {
-                JobFailReason.Is("EU.NoTailoringBench".Translate());
+                JobFailReason.Is("EU.MissingWorkStation".Translate(GetNeededCraftingBenchName(t)));
                 return null;
             }
 

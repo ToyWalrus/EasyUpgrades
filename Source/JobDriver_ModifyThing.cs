@@ -86,7 +86,7 @@ namespace EasyUpgrades
                 initAction = () =>
                 {
                     DestroyPlacedResources();
-                    RemoveAndReplace(modify.actor);
+                    RemoveAndReplace(modify.actor);                    
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
             };
@@ -173,6 +173,7 @@ namespace EasyUpgrades
                 }
             }
 
+            Map.designationManager.RemoveAllDesignationsOn(Building);
             Building.DeSpawn();
 
             Thing newThing = ThingMaker.MakeThing(modifyTo, madeOf);
@@ -237,6 +238,12 @@ namespace EasyUpgrades
             {
                 resourcesPlaced.Add(TargetB.Thing);
             });
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Collections.Look<Thing>(ref resourcesPlaced, "resourcesPlaced", LookMode.Reference, new List<Thing>());
         }
 
         protected override float TotalNeededWork
