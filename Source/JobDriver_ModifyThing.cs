@@ -77,7 +77,7 @@ namespace EasyUpgrades
 
             modify.defaultCompleteMode = ToilCompleteMode.Never;
             modify.WithProgressBar(TargetIndex.A, () => 1f - workLeft / totalNeededWork, false, -0.5f);
-            modify.activeSkill = (() => SkillDefOf.Construction);
+            modify.activeSkill = () => SkillDefOf.Construction;
             modify.PlaySoundAtEnd(SoundDefOf.TinyBell);
             yield return modify;
 
@@ -177,21 +177,15 @@ namespace EasyUpgrades
 
             Thing newThing = ThingMaker.MakeThing(modifyTo, madeOf);
             newThing.SetFactionDirect(Faction.OfPlayer);
-
-            // Generate building quality, if applicable
-            CompQuality compQuality = newThing.TryGetComp<CompQuality>();
-            if (compQuality != null)
-            {
-                QualityCategory qualityCategory = QualityUtility.GenerateQualityCreatedByPawn(pawn, SkillDefOf.Construction);
-                compQuality.SetQuality(qualityCategory, ArtGenerationContext.Colony);
-                QualityUtility.SendCraftNotification(newThing, pawn);
-            }
             newThing.HitPoints = newThing.MaxHitPoints;
 
             // Add bills from previous building
             if (currentBills != null)
             {
-                (newThing as Building_WorkTable).billStack = currentBills;
+                foreach (Bill bill in currentBills)
+                {
+                    (newThing as Building_WorkTable).BillStack.AddBill(bill);
+                }                
             }
 
             // Attach to power source if applicable and available
@@ -230,12 +224,8 @@ namespace EasyUpgrades
             // Despawn used resources
             foreach (Thing used in resourcesPlaced)
             {
-                if (used.Destroyed)
-                {
-                    Log.Error("Tried to use up " + used.Label + " but it was already destroyed!");
-                }
-                else
-                {
+                if (!used.Destroyed)
+                { 
                     used.Destroy();
                 }
             }
@@ -246,7 +236,6 @@ namespace EasyUpgrades
             return Toils_General.Do(() =>
             {
                 resourcesPlaced.Add(TargetB.Thing);
-                Log.Message("Just placed " + TargetB.Thing.stackCount + " " + TargetB.Thing.def.label);
             });
         }
 

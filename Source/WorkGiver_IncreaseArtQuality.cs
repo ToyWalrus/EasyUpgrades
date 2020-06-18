@@ -9,6 +9,14 @@ namespace EasyUpgrades
     {
         protected override DesignationDef Designation => EasyUpgradesDesignationDefOf.IncreaseQuality_Art;
 
+        public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn p)
+        {
+            foreach (Designation designation in p.Map.designationManager.SpawnedDesignationsOfDef(Designation))
+            {
+                yield return designation.target.Thing;
+            }
+        }
+
         protected override Job MakeIncreaseQualityJob(Thing t, Pawn pawn, List<ThingCountClass> resources)
         {
             if (!CanDoWorkType(WorkTypeDefOf.Crafting, pawn)) return null;

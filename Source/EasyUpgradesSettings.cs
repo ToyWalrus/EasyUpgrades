@@ -8,25 +8,25 @@ namespace EasyUpgrades
     // https://rimworldwiki.com/wiki/Modding_Tutorials/ModSettings
     class EasyUpgradesSettings : ModSettings
     {
-        public static float increaseAwfulQualityChance;
-        public static float increasePoorQualityChance;
-        public static float increaseNormalQualityChance;
-        public static float increaseGoodQualityChance;
-        public static float increaseExcellentQualityChance;
-        public static float increaseMasterworkQualityChance;
+        public static float increaseAwfulQualityChance = .95f;
+        public static float increasePoorQualityChance = .9f;
+        public static float increaseNormalQualityChance = .85f;
+        public static float increaseGoodQualityChance = .6f;
+        public static float increaseExcellentQualityChance = .25f;
+        public static float increaseMasterworkQualityChance = .15f;
 
-        public static float decreasePoorQualityChance;
-        public static float decreaseNormalQualityChance;
-        public static float decreaseGoodQualityChance;
-        public static float decreaseExcellentQualityChance;
-        public static float decreaseMasterworkQualityChance;
+        public static float decreasePoorQualityChance = .02f;
+        public static float decreaseNormalQualityChance = .07f;
+        public static float decreaseGoodQualityChance = .12f;
+        public static float decreaseExcellentQualityChance = .19f;
+        public static float decreaseMasterworkQualityChance = .25f;
 
-        public static float neededMaterialsAwfulQuality;
-        public static float neededMaterialsPoorQuality;
-        public static float neededMaterialsNormalQuality;
-        public static float neededMaterialsGoodQuality;
-        public static float neededMaterialsExcellentQuality;
-        public static float neededMaterialsMasterworkQuality;
+        public static float neededMaterialsAwfulQuality = .2f;
+        public static float neededMaterialsPoorQuality = .6f;
+        public static float neededMaterialsNormalQuality = .9f;
+        public static float neededMaterialsGoodQuality = 1.25f;
+        public static float neededMaterialsExcellentQuality = 2f;
+        public static float neededMaterialsMasterworkQuality = 3f;
 
         public override void ExposeData()
         {
@@ -56,7 +56,10 @@ namespace EasyUpgrades
 
     class EasyUpgradesMod : Mod
     {
-        public EasyUpgradesMod(ModContentPack content) : base(content) { }
+        public EasyUpgradesMod(ModContentPack content) : base(content) 
+        {
+            GetSettings<EasyUpgradesSettings>();
+        }
 
         public override void DoSettingsWindowContents(Rect inRect)
         {

@@ -24,14 +24,15 @@ namespace EasyUpgrades
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if (IsCraftingJob)
+            if ((IsCraftingJob || IsArtisticJob) && pawn.CanReserve(TargetB))
             {
                 return pawn.Reserve(TargetB, job, 1, -1, null, errorOnFailed);
             }
-            else
+            else if (pawn.CanReserve(TargetA))
             {
                 return pawn.Reserve(TargetA, job, 1, -1, null, errorOnFailed);
             }
+            return false;
         }
 
         protected override IEnumerable<Toil> MakeNewToils()
@@ -70,9 +71,11 @@ namespace EasyUpgrades
             {
                 initAction = () =>
                 {
-                    DestroyPlacedResources();
-                    RemoveDesignationsForQualityUpgrade(IsCraftingJob ? thingToWorkOn : TargetA.Thing);
-                    NotifyQualityChanged(modify.actor);
+                    if (NotifyQualityChanged(modify.actor))
+                    {
+                        DestroyPlacedResources();
+                        RemoveDesignationsForQualityUpgrade(IsCraftingJob ? thingToWorkOn : TargetA.Thing);
+                    }
                 },
                 defaultCompleteMode = ToilCompleteMode.Instant
             };
@@ -169,12 +172,14 @@ namespace EasyUpgrades
                     Thing minifiedThing = job.targetA.Thing.TryMakeMinified();
                     if (GenPlace.TryPlaceThing(minifiedThing, info.Cell, Map, ThingPlaceMode.Direct))
                     {
+                        Map.designationManager.RemoveAllDesignationsOn(job.targetA.Thing);
                         thingToWorkOn = minifiedThing;
                         job.SetTarget(TargetIndex.A, thingToWorkOn);
+                        Map.designationManager.AddDesignation(new Designation(thingToWorkOn, EasyUpgradesDesignationDefOf.IncreaseQuality_Art));
                     }
                     else
                     {
-                        Log.Error("Couldn't spawn the minified art thing!");
+                        thingToWorkOn = job.targetA.Thing;
                     }
                 }
                 else
@@ -235,9 +240,12 @@ namespace EasyUpgrades
             });
         }
 
-        private void NotifyQualityChanged(Pawn pawn)
+        private bool NotifyQualityChanged(Pawn pawn)
         {
             Thing thingModified = IsCraftingJob ? thingToWorkOn : TargetA.Thing;
+            Log.Message("Try change quality for " + thingModified.Label);
+            Log.Message("Minified? " + (thingModified is MinifiedThing).ToString());
+
             QualityCategory curQuality;
             if (!thingModified.TryGetQuality(out curQuality))
             {
@@ -246,7 +254,7 @@ namespace EasyUpgrades
                 Log.Message("Other things A: " + (TargetA.Thing?.Label ?? "null"));
                 Log.Message("Other things B: " + (TargetB.Thing?.Label ?? "null"));
                 Log.Message("Other things C: " + (TargetC.Thing?.Label ?? "null"));
-                return;
+                return false;
             }
 
             float successChance = EasyUpgrades.GetSuccessChance(pawn, ActiveSkillDef, thingModified);
@@ -257,6 +265,11 @@ namespace EasyUpgrades
             string itemLabel = thingModified.LabelNoCount;
             float xp;
             MessageTypeDef messageType;
+
+            if (thingModified is MinifiedThing)
+            {
+                thingModified = (thingModified as MinifiedThing).InnerThing;
+            }
 
             if (randVal < successChance)
             {
@@ -284,6 +297,7 @@ namespace EasyUpgrades
 
             pawn.skills.Learn(ActiveSkillDef, xp);
             Messages.Message(msg.Translate(pawn.NameShortColored, itemLabel.Substring(0, itemLabel.IndexOf("(") - 1), Mathf.Clamp(successChance, 0f, 1f).ToStringPercent()), pawn, messageType);
+            return true;
         }
 
         private void DestroyPlacedResources()
@@ -303,11 +317,12 @@ namespace EasyUpgrades
             return Toils_General.Do(() =>
             {
                 resourcesPlaced.Add(job.GetTarget(index).Thing);
+                Log.Message("Placed " + job.GetTarget(index).Thing.Label);
             });
         }
 
         private void RemoveDesignationsForQualityUpgrade(Thing t)
-        {
+        {            
             DesignationManager manager = Map.designationManager;
             manager.RemoveAllDesignationsOn(t);
         }
@@ -316,12 +331,16 @@ namespace EasyUpgrades
         {
             get
             {
+                if (IsArtisticJob && thingToWorkOn is MinifiedThing)
+                {
+                    Thing inner = (thingToWorkOn as MinifiedThing).InnerThing;
+                    return Mathf.Clamp(inner.def.GetStatValueAbstract(StatDefOf.WorkToMake, inner.Stuff) / (float)pawn.skills.GetSkill(ActiveSkill).levelInt, 1f, 200f);
+                }
                 if (IsCraftingJob)
                 {
-                    // StatWorker_MarketValue.CalculableRecipe(thingToWorkOn.def).workAmount
-                    return thingToWorkOn.def.GetStatValueAbstract(StatDefOf.WorkToMake, thingToWorkOn.Stuff);
+                    return Mathf.Clamp(thingToWorkOn.def.GetStatValueAbstract(StatDefOf.WorkToMake, thingToWorkOn.Stuff) / (float)pawn.skills.GetSkill(ActiveSkill).levelInt, 1f, 200f);
                 }
-                return Mathf.Clamp((TargetA.Thing as Building).GetStatValue(StatDefOf.WorkToBuild, true), 20f, 3000f);
+                return Mathf.Clamp((TargetA.Thing as Building).GetStatValue(StatDefOf.WorkToBuild, true), 20f, 200f);
             }
         }
 

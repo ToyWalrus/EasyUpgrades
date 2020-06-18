@@ -68,7 +68,13 @@ namespace EasyUpgrades
 
         protected Building GetClosestNeededCraftingBuilding(Pawn pawn, Thing t)
         {
-            List<string> defNames = t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
+            List<string> defNames;
+            if (t is MinifiedThing) {
+               defNames = (t as MinifiedThing).InnerThing.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
+            } else
+            {
+                defNames = t.def.recipeMaker.recipeUsers.ConvertAll((def) => def.defName);
+            }
             return pawn.Map.listerBuildings.allBuildingsColonist
                 .Where((b) => defNames.Contains(b.def.defName) && !b.IsForbidden(pawn) && !b.IsBurning())
                 .OrderBy((b) => (b.Position - pawn.Position).LengthManhattan)
@@ -112,6 +118,11 @@ namespace EasyUpgrades
 
         private ThingDefCountClass GetStuffNeededForQualityIncrease(Thing t)
         {
+            if (t is MinifiedThing)
+            {
+                t = (t as MinifiedThing).InnerThing;
+            }
+
             ThingDef neededThing;
             QualityCategory currentQuality;
             int amountModifier = 1;

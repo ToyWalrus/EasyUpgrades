@@ -12,25 +12,27 @@ namespace EasyUpgrades
         private DesignationDef apparelDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Apparel;
         private DesignationDef artDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Art;
         private DesignationDef itemDes = EasyUpgradesDesignationDefOf.IncreaseQuality_Item;
-        private bool HasAnyIncreaseQualityDesignation => HasIncreaseApparelQualityDes || HasIncreaseBuildingQualityDes || HasIncreaseArtQualityDes || HasIncreaseItemQualityDes;
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (parent.Faction == Faction.OfPlayer)
             {
-                if (parent.def.IsArt && !HasAnyIncreaseQualityDesignation)
+                if (parent.def.IsArt && !HasIncreaseArtQualityDes)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, artDes));                    
                 }
-                else if (parent is Building && !HasAnyIncreaseQualityDesignation)
+                else if (parent is Building && !HasIncreaseBuildingQualityDes)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, buildingDes));
                 }
-                else if (parent.def.IsApparel && !HasAnyIncreaseQualityDesignation)
+            }
+            else if (parent.Faction == null)
+            {                
+                if (parent.def.IsApparel && !HasIncreaseApparelQualityDes)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, apparelDes));
                 }
-                else if (parent.def.IsWeapon && !HasAnyIncreaseQualityDesignation)
+                else if (parent.def.IsWeapon && !HasIncreaseItemQualityDes)
                 {
                     yield return CreateCommandForDesignation(new Designation(parent, itemDes));
                 }
