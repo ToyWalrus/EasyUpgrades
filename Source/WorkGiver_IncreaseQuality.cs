@@ -149,8 +149,8 @@ namespace EasyUpgrades
 
             if (!t.def.MadeFromStuff || stuff == null)
             {
-                Log.Message("Couldn't get stuff for " + t.Label);
-                return null;
+                // If it's not made from "stuff," just require some wood
+                return new ThingDefCountClass(ThingDefOf.WoodLog, 10);
             }
 
             if (!t.TryGetQuality(out currentQuality))
