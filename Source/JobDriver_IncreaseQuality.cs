@@ -24,9 +24,11 @@ namespace EasyUpgrades
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if ((IsCraftingJob || IsArtisticJob) && pawn.CanReserve(TargetB))
+            if ((IsCraftingJob || IsArtisticJob) && pawn.CanReserve(TargetB, 1, -1, null, true))
             {
-                return pawn.Reserve(TargetB, job, 1, -1, null, errorOnFailed);
+                bool reserve1 = pawn.Reserve(TargetA, job, 1, -1, null, errorOnFailed);
+                bool reserve2 = pawn.Reserve(TargetB, job, 1, -1, null, errorOnFailed);
+                return reserve1 && reserve2;
             }
             else if (pawn.CanReserve(TargetA))
             {
@@ -90,6 +92,7 @@ namespace EasyUpgrades
         {
             this.FailOnForbidden(TargetIndex.A);
             this.FailOnForbidden(TargetIndex.B);
+            this.FailOnSomeonePhysicallyInteracting(TargetIndex.B);
             Toil gotoWorkbench = Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.B);
             Toil endGathering = Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.InteractionCell).FailOnDestroyedNullOrForbidden(TargetIndex.B);
 
