@@ -1,7 +1,7 @@
 # EasyUpgrades
 A RimWorld mod to make life easier by allowing you to upgrade/downgrade buildings without deconstructing them first.
 
-**Important note: this mod is no longer being maintained by myself. Feel free to fork this repo or download the current .dll files**
+**Important note: this mod is no longer being maintained by myself. Feel free to fork this repo to use yourself.**
 
 ## With this mod, you can:
 * Easily upgrade or downgrade buildings without needing to deconstruct them first. The resource cost remains the same. (e.g. a fueled stove normally takes 80 steel, while an electric stove takes 80 steel plus 2 components. So in order to upgrade from a fueled stove to an electric stove, all you need is the difference, which in this case is 2 components.) When downgrading a building, it refunds the difference. Additionally, if there's any remaining fuel left in a building when you upgrade it, that fuel will also be refunded.
